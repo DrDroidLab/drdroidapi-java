@@ -24,6 +24,7 @@ public class ClientConfig {
     }
 
     public ClientConfig(String sinkUrl, int port, String serviceName) {
+        this();
         this.sinkUrl = sinkUrl;
         this.port = port;
         this.serviceName = serviceName;
