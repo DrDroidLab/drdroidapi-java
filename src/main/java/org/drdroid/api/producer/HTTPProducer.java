@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class HTTPProducer {
+public class HTTPProducer implements IProducer {
     private final MessageProducer producer;
 
     public HTTPProducer(ClientConfig config) {

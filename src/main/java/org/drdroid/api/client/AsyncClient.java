@@ -5,6 +5,7 @@ import org.drdroid.api.message.Data;
 import org.drdroid.api.models.UUIDRegister;
 import org.drdroid.api.models.ClientConfig;
 import org.drdroid.api.IDrDroidAPI;
+import org.drdroid.api.producer.IProducer;
 import org.drdroid.api.utils.WorkflowEventDecorator;
 import org.drdroid.api.models.WorkflowEvent;
 import org.drdroid.api.producer.HTTPProducer;
@@ -32,7 +33,7 @@ public class AsyncClient implements IDrDroidAPI {
     private final AtomicLong eventId = new AtomicLong(0L);
     private static final UUID uuid = UUID.randomUUID();
     private WorkflowEventDecorator workflowEventDecorator;
-    private HTTPProducer producer;
+    private IProducer producer;
     private final Lock registerLock = new ReentrantLock();
     private Boolean registered = false;
 
