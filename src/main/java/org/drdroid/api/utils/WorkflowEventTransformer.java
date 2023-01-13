@@ -1,24 +1,27 @@
 package org.drdroid.api.utils;
 
+import org.drdroid.api.models.KeyValue;
 import org.drdroid.api.models.Value;
 import org.drdroid.api.models.Workflow;
 import org.drdroid.api.models.WorkflowEvent;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WorkflowEventTransformer {
 
     public static WorkflowEvent transform(String workflowName, String state, Map<String, Object> kvPairs, String timeStamp) {
-        Map<String, Value> modelKvPairs = kvPairs.entrySet()
+        List<KeyValue> modelKvPairs = kvPairs.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, WorkflowEventTransformer::getValueWithType));
+                .map(e -> new KeyValue(e.getKey(), getValueWithType(e.getValue())))
+                .collect(Collectors.toList());
 
         Workflow workflow = new Workflow(workflowName);
         return new WorkflowEvent(workflow, timeStamp, state, modelKvPairs);
     }
 
-    public static Value getValueWithType(Object value) {
+    private static Value getValueWithType(Object value) {
 
         Value typedValue = new Value();
         if (value instanceof String) {
