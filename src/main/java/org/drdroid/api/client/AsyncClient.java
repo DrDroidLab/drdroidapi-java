@@ -28,11 +28,11 @@ public class AsyncClient implements IDrDroidAPI {
     private static final int MIN_THREADS = 1;
     private static final UUID uuid = UUID.randomUUID();
 
+    private Boolean registered = false;
     private final int eventLimit;
     private final int batchSize;
     private final int maxWaitTimeInMs;
 
-    private final Boolean registered = false;
     private final AtomicLong droppedCount = new AtomicLong(0L);
     private final AtomicLong eventId = new AtomicLong(0L);
     private final BlockingQueue<WorkflowEvent> events = new LinkedBlockingQueue<>();
