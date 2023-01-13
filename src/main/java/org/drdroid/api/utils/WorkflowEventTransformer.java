@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class WorkflowEventTransformer {
 
-    public static WorkflowEvent transform(String workflowName, String state, Map<String, Object> kvPairs, String timeStamp) {
+    public static WorkflowEvent transform(String workflowName, String state, Map<String, ?> kvPairs, String timeStamp) {
         List<KeyValue> modelKvPairs = kvPairs.entrySet()
                 .stream()
                 .map(e -> new KeyValue(e.getKey(), getValueWithType(e.getValue())))
@@ -45,6 +45,7 @@ public class WorkflowEventTransformer {
             typedValue.setByteValue((Byte) value);
             typedValue.setValid(true);
         } else {
+            System.out.println("Encountered unexpected value type");
             typedValue.setValid(false);
         }
         return typedValue;

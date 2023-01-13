@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AsyncClient implements IDrDroidAPI {
 
     private static final int MAX_THREADS = 40;
+    private static final int MIN_THREADS = 1;
     private int eventLimit;
     private int batchSize;
     private int maxWaitTimeInMs;
@@ -68,7 +69,7 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     @Override
-    public void send(String workflowName, String state, Map<String, Object> kvPairs) {
+    public void send(String workflowName, String state, Map<String, ?> kvPairs) {
         String timestamp = DateTimeFormatter.getCurrentFormattedTimeStamp();
         WorkflowEvent event = WorkflowEventTransformer.transform(workflowName, state, kvPairs, timestamp);
         if (this.events.size() > this.eventLimit) {
@@ -85,6 +86,9 @@ public class AsyncClient implements IDrDroidAPI {
         int threadsRequied = qps / (int) messageSentPerSecondInSingleThread;
         if (threadsRequied > MAX_THREADS) {
             threadsRequied = MAX_THREADS;
+        }
+        if(threadsRequied < MIN_THREADS) {
+            threadsRequied = MIN_THREADS;
         }
 
         ExecutorService poller = Executors.newFixedThreadPool(threadsRequied, (new ThreadFactoryBuilder()).setNameFormat("AsyncDrDroidClientPoller-%d").build());
