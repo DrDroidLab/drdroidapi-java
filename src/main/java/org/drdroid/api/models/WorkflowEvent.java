@@ -12,16 +12,16 @@ import java.util.List;
 public class WorkflowEvent implements java.io.Serializable {
 
     private Workflow workflow;
-    private String timeStamp;
+    private String timestamp;
     private String state;
     private List<KeyValue> kvPairs;
 
     public WorkflowEvent() {
     }
 
-    public WorkflowEvent(Workflow workflow, String timeStamp, String state, List<KeyValue> kvPairs) {
+    public WorkflowEvent(Workflow workflow, String timestamp, String state, List<KeyValue> kvPairs) {
         this.workflow = workflow;
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
         this.state = state;
         this.kvPairs = kvPairs;
     }
@@ -37,13 +37,13 @@ public class WorkflowEvent implements java.io.Serializable {
     }
 
     @JsonGetter("timestamp")
-    public String getTimeStamp() {
-        return this.timeStamp;
+    public String getTimestamp() {
+        return this.timestamp;
     }
 
     @JsonSetter("timestamp")
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     @JsonGetter("state")
