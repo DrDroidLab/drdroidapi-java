@@ -14,12 +14,12 @@ public class WorkflowEvent implements java.io.Serializable {
     private Workflow workflow;
     private String timeStamp;
     private String state;
-    private Map<String, Value> kvPairs;
+    private KeyValue kvPairs;
 
     public WorkflowEvent() {
     }
 
-    public WorkflowEvent(Workflow workflow, String timeStamp, String state, Map<String, Value> kvPairs) {
+    public WorkflowEvent(Workflow workflow, String timeStamp, String state, KeyValue kvPairs) {
         this.workflow = workflow;
         this.timeStamp = timeStamp;
         this.state = state;
@@ -57,12 +57,12 @@ public class WorkflowEvent implements java.io.Serializable {
     }
 
     @JsonGetter("kvs")
-    public Map<String, Value> getKvPairs() {
+    public KeyValue getKvPairs() {
         return this.kvPairs;
     }
 
     @JsonSetter("kvs")
-    public void setKvPairs(Map<String, Value> kvPairs) {
+    public void setKvPairs(KeyValue kvPairs) {
         this.kvPairs = kvPairs;
     }
 
