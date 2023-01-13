@@ -73,8 +73,9 @@ public class AsyncClient implements IDrDroidAPI {
         String timestamp = DateTimeFormatter.getCurrentFormattedTimeStamp();
         WorkflowEvent event = WorkflowEventTransformer.transform(workflowName, state, kvPairs, timestamp);
         if (this.events.size() > this.eventLimit) {
-            this.droppedCount.incrementAndGet();
-            //logger.info("dropped count has reached to count {}", this.droppedCount.get());
+            if (this.droppedCount.incrementAndGet() % 1000L == 0L) {
+                System.out.printf("Dropped DrDroid event count has reached: %s", this.droppedCount.get());
+            }
         } else {
             this.events.add(event);
         }
@@ -86,8 +87,7 @@ public class AsyncClient implements IDrDroidAPI {
         int threadsRequied = qps / (int) messageSentPerSecondInSingleThread;
         if (threadsRequied > MAX_THREADS) {
             threadsRequied = MAX_THREADS;
-        }
-        if(threadsRequied < MIN_THREADS) {
+        } else if (threadsRequied < MIN_THREADS) {
             threadsRequied = MIN_THREADS;
         }
 
