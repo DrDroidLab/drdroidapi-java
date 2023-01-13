@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-import java.util.Map;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,12 +14,12 @@ public class WorkflowEvent implements java.io.Serializable {
     private Workflow workflow;
     private String timeStamp;
     private String state;
-    private KeyValue kvPairs;
+    private List<KeyValue> kvPairs;
 
     public WorkflowEvent() {
     }
 
-    public WorkflowEvent(Workflow workflow, String timeStamp, String state, KeyValue kvPairs) {
+    public WorkflowEvent(Workflow workflow, String timeStamp, String state, List<KeyValue> kvPairs) {
         this.workflow = workflow;
         this.timeStamp = timeStamp;
         this.state = state;
@@ -57,12 +57,12 @@ public class WorkflowEvent implements java.io.Serializable {
     }
 
     @JsonGetter("kvs")
-    public KeyValue getKvPairs() {
+    public List<KeyValue> getKvPairs() {
         return this.kvPairs;
     }
 
     @JsonSetter("kvs")
-    public void setKvPairs(KeyValue kvPairs) {
+    public void setKvPairs(List<KeyValue> kvPairs) {
         this.kvPairs = kvPairs;
     }
 
