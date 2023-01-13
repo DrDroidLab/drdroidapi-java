@@ -1,11 +1,10 @@
 package org.drdroid.api.utils;
 
+import org.drdroid.api.models.KeyValue;
 import org.drdroid.api.models.Value;
 import org.drdroid.api.models.WorkflowEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class WorkflowEventDecorator {
 
@@ -21,21 +20,26 @@ public class WorkflowEventDecorator {
     }
 
     public WorkflowEvent build(WorkflowEvent workflowEvent, long eventId, String agentId) {
-        Map<String, Value> kvPairs = workflowEvent.getKvPairs();
+        List<KeyValue> kvPairs = workflowEvent.getKvPairs();
+
         if (Objects.isNull(kvPairs)) {
-            kvPairs = new HashMap<>();
+            kvPairs = new ArrayList<>();
         }
+
         Value drdEvIdValue = new Value();
         drdEvIdValue.setLongValue(eventId);
-        kvPairs.put(drdEvIdKey, drdEvIdValue);
+        drdEvIdValue.setValid(true);
+        kvPairs.add(new KeyValue(drdEvIdKey, drdEvIdValue));
 
         Value drdAgentIdValue = new Value();
         drdAgentIdValue.setStringValue(agentId);
-        kvPairs.put(drdAgentIdKey, drdAgentIdValue);
+        drdAgentIdValue.setValid(true);
+        kvPairs.add(new KeyValue(drdAgentIdKey, drdAgentIdValue));
 
         Value serviceNameValue = new Value();
         serviceNameValue.setStringValue(service);
-        kvPairs.put(serviceNameKey, serviceNameValue);
+        serviceNameValue.setValid(true);
+        kvPairs.add(new KeyValue(serviceNameKey, serviceNameValue));
 
         return workflowEvent;
     }

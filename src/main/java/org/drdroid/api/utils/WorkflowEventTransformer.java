@@ -17,6 +17,8 @@ public class WorkflowEventTransformer {
                 .map(e -> new KeyValue(e.getKey(), getValueWithType(e.getValue())))
                 .collect(Collectors.toList());
 
+        modelKvPairs = modelKvPairs.stream().filter(kv -> kv.getValue().getValid()).collect(Collectors.toList());
+
         Workflow workflow = new Workflow(workflowName);
         return new WorkflowEvent(workflow, timeStamp, state, modelKvPairs);
     }
@@ -26,19 +28,26 @@ public class WorkflowEventTransformer {
         Value typedValue = new Value();
         if (value instanceof String) {
             typedValue.setStringValue(value.toString());
+            typedValue.setValid(true);
         } else if (value instanceof Boolean) {
             typedValue.setBooleanValue((Boolean) value);
+            typedValue.setValid(true);
         } else if (value instanceof Integer) {
             typedValue.setLongValue(Long.valueOf((Integer) value));
+            typedValue.setValid(true);
         } else if (value instanceof Long) {
             typedValue.setLongValue((Long) value);
+            typedValue.setValid(true);
         } else if (value instanceof Double) {
             typedValue.setDoubleValue((Double) value);
+            typedValue.setValid(true);
         } else if (value instanceof Byte) {
             typedValue.setByteValue((Byte) value);
+            typedValue.setValid(true);
+        } else {
+            typedValue.setValid(false);
         }
         return typedValue;
-
     }
 
 }

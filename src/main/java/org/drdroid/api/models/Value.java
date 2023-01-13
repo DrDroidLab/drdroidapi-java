@@ -1,9 +1,6 @@
 package org.drdroid.api.models;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,6 +11,20 @@ public class Value {
     Long longValue;
     Double doubleValue;
     Byte byteValue;
+
+    @JsonIgnore
+    boolean valid = true;
+
+    public Value() {
+    }
+
+    public Value(String stringValue, Boolean booleanValue, Long longValue, Double doubleValue, Byte byteValue, Boolean valid) {
+        this.stringValue = stringValue;
+        this.booleanValue = booleanValue;
+        this.longValue = longValue;
+        this.byteValue = byteValue;
+        this.valid = valid;
+    }
 
     @JsonGetter("string_value")
     public String getStringValue() {
@@ -63,6 +74,14 @@ public class Value {
     @JsonSetter("bytes_value")
     public void setByteValue(Byte value) {
         this.byteValue = value;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+
+    public Boolean getValid() {
+        return valid;
     }
 
 }
