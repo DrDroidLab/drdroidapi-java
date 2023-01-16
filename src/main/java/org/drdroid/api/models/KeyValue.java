@@ -12,6 +12,14 @@ public class KeyValue {
     String key;
     Value value;
 
+    public KeyValue() {
+    }
+
+    public KeyValue(String key, Value value) {
+        this.key = key;
+        this.value = value;
+    }
+
     @JsonGetter("key")
     public String getKey() {
         return key;

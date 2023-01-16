@@ -13,18 +13,14 @@ public class ClientConfig {
 
     private int port;
 
-    public ClientConfig() {
+    public ClientConfig(String sinkUrl, int port, String serviceName) {
         //TODO: tune configs
-        this.connectionTimeoutInMs = 100;
-        this.socketTimeoutInMs = 100;
+        this.connectionTimeoutInMs = 1000;
+        this.socketTimeoutInMs = 1000;
         this.asyncMaxWaitTimeInMs = 100;
         this.asyncBatchSize = 10;
         this.maxQueueSize = 10;
         this.messagePerSecond = 10;
-    }
-
-    public ClientConfig(String sinkUrl, int port, String serviceName) {
-        this();
         this.sinkUrl = sinkUrl;
         this.port = port;
         this.serviceName = serviceName;

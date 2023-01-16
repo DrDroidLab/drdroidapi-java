@@ -7,20 +7,14 @@ import java.util.Map;
 
 public class DrDroidClient implements IDrDroidAPI {
 
-    private IDrDroidAPI client;
-
-    /**
-     * Default Constructor
-     */
-    public DrDroidClient() {
-    }
+    private final IDrDroidAPI client;
 
     public DrDroidClient(ClientConfig clientConfig) {
         client = new AsyncClient(clientConfig);
     }
 
     @Override
-    public void send(String workflowName, String state, Map<String, Object> kvPairs) {
+    public void send(String workflowName, String state, Map<String, ?> kvPairs) {
         this.client.send(workflowName, state, kvPairs);
     }
 
