@@ -4,7 +4,7 @@
 ```agsl
 Add the following to your settings.gradle:
 include ':drdroidapi-java'
-project(':drdroidapi-java').projectDir = new File('/Users/mohit.goyal/DrDroidLab/drdroidapi-java')
+project(':drdroidapi-java').projectDir = new File('<path to lib>/drdroidapi-java')
 ```
 
 ```agsl
