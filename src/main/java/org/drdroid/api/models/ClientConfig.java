@@ -2,8 +2,10 @@ package org.drdroid.api.models;
 
 public class ClientConfig {
 
-    private static final String orgEnvKey = "ORG";
+    private static final String orgEnvKey = "ORG_NAME";
     private static final String orgEnvDefaultValue = "";
+    private static final String sinUrlEnvKey = "DRDROID_HOSTNAME";
+    private static final String sinUrlEnvDefaultValue = "";
 
     private String sinkUrl;
     private String serviceName;
@@ -15,6 +17,20 @@ public class ClientConfig {
     private int maxQueueSize;
     private int messagePerSecond;
     private int servicePort;
+
+    public ClientConfig(int servicePort, String serviceName) {
+        //TODO: tune configs
+        this.connectionTimeoutInMs = 1000;
+        this.socketTimeoutInMs = 1000;
+        this.asyncMaxWaitTimeInMs = 1000;
+        this.asyncBatchSize = 20;
+        this.maxQueueSize = 20;
+        this.messagePerSecond = 10;
+        this.servicePort = servicePort;
+        this.serviceName = serviceName;
+        this.sinkUrl = System.getProperty(sinUrlEnvKey, sinUrlEnvDefaultValue);
+        this.org = System.getProperty(orgEnvKey, orgEnvDefaultValue);
+    }
 
     public ClientConfig(String sinkUrl, int servicePort, String serviceName) {
         //TODO: tune configs
