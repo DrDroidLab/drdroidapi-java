@@ -14,7 +14,6 @@ public class ClientConfig {
     private int asyncBatchSize;
     private int maxQueueSize;
     private int messagePerSecond;
-
     private int servicePort;
 
     public ClientConfig(String sinkUrl, int servicePort, String serviceName) {
