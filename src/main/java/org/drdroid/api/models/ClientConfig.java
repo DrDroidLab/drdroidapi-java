@@ -28,8 +28,10 @@ public class ClientConfig {
         this.messagePerSecond = 10;
         this.servicePort = servicePort;
         this.serviceName = serviceName;
-        this.sinkUrl = System.getProperty(sinUrlEnvKey, sinUrlEnvDefaultValue);
-        this.org = System.getProperty(orgEnvKey, orgEnvDefaultValue);
+        this.sinkUrl = System.getenv(sinUrlEnvKey) != null && !System.getenv(sinUrlEnvKey).isEmpty() ?
+                System.getenv(sinUrlEnvKey) : sinUrlEnvDefaultValue;
+        this.org = System.getenv(orgEnvKey) != null && !System.getenv(orgEnvKey).isEmpty() ?
+                System.getenv(orgEnvKey) : orgEnvDefaultValue;
     }
 
     public ClientConfig(String sinkUrl, int servicePort, String serviceName) {
