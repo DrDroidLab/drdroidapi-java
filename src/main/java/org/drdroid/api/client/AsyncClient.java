@@ -139,12 +139,14 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     private void register() {
+        Map<String, String> resourceKvs = new HashMap<>();
+        resourceKvs.put("Port", String.valueOf(clientConfig.getServicePort()));
         if (this.registerLock.tryLock()) {
             try {
                 UUIDRegister register = new UUIDRegister();
                 register.setServiceName(clientConfig.getServiceName());
                 register.setUuid(uuid);
-                register.setPort(clientConfig.getPort());
+                register.setResourceKvs(resourceKvs);
                 register.setIp(InetAddress.getLocalHost().getHostAddress());
                 this.registered = true;
                 //this.registered = this.producer.register(register);
