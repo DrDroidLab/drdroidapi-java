@@ -11,4 +11,6 @@ public interface IProducer {
 
     boolean register(UUIDRegister register);
 
+    void sendBeat(UUIDRegister register);
+
 }

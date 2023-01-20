@@ -1,12 +1,13 @@
 package org.drdroid.api.models;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class UUIDRegister {
 
     private String serviceName;
     private UUID uuid;
-    private Integer port;
+    private Map<String, String> resourceKvs;
     private String ip;
 
     public String getServiceName() {
@@ -25,12 +26,12 @@ public class UUIDRegister {
         this.uuid = uuid;
     }
 
-    public Integer getPort() {
-        return port;
+    public Map<String, String> getResourceKvs() {
+        return resourceKvs;
     }
 
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setResourceKvs(Map<String, String> resourceKvs) {
+        this.resourceKvs = resourceKvs;
     }
 
     public String getIp() {
