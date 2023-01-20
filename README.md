@@ -38,6 +38,10 @@ To initialise DrDroidClient, add the following cliennt config:
 To send event to DrDroid, use the following interface:
 clien.send(String workflowName, String state, Map<String, ?> keyValuePairs);
 ```
+#### Run the jar from terminal using the following command
+```agsl
+java -jar <location to jar file>.jar
+```
 ## View your workflows
 Once your events have been published, you can view the workflow these events are creating and how it resembles the actual business flow for your customers or internal processes. Check out this URL - [http://demo1.drdroid.io](http://demo1.drdroid.io)
 
