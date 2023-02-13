@@ -56,12 +56,12 @@ public class WorkflowEvent implements java.io.Serializable {
         this.state = state;
     }
 
-    @JsonGetter("kvs")
+    @JsonGetter("payload")
     public Map<String, Object> getPayload() {
         return this.payload;
     }
 
-    @JsonSetter("kvs")
+    @JsonSetter("payload")
     public void setPayload(Map<String, Object> payload) {
         this.payload = payload;
     }

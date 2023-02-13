@@ -4,7 +4,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import io.drdroid.api.models.ClientConfig;
 import io.drdroid.api.models.http.request.Data;
-import io.drdroid.api.models.http.request.Payload;
+import io.drdroid.api.models.http.request.RequestPayload;
 import io.drdroid.api.models.http.request.UUIDRegister;
 import io.drdroid.api.models.http.response.RegisterAPIResponse;
 import io.drdroid.api.models.http.response.SendBatchAPIResponse;
@@ -26,11 +26,12 @@ public class HTTPProducer implements IProducer {
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.setConnectTimeout(config.getConnectionTimeoutInMs(), TimeUnit.MILLISECONDS);
         okHttpClient.setReadTimeout(config.getSocketTimeoutInMs(), TimeUnit.MILLISECONDS);
-        okHttpClient.networkInterceptors().add(chain -> {
-            Request.Builder requestBuilder = chain.request().newBuilder();
-            requestBuilder.header("Content-Type", "application/json");
-            requestBuilder.header("X-REQUEST-ORG", config.getOrg());
-            return chain.proceed(requestBuilder.build());
+        okHttpClient.interceptors().add(chain -> {
+            Request request = chain.request().newBuilder()
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("X-REQUEST-ORG", config.getOrg())
+                    .build();
+            return chain.proceed(request);
         });
 
         Retrofit retrofit = (new Retrofit.Builder())
@@ -43,8 +44,7 @@ public class HTTPProducer implements IProducer {
     }
 
     public Integer sendBatch(Data data) {
-        Payload payload = new Payload(data);
-        Call<SendBatchAPIResponse> call = this.producer.send(payload);
+        Call<SendBatchAPIResponse> call = this.producer.send(new RequestPayload(data));
         try {
             Response<SendBatchAPIResponse> response = call.execute();
             return response.body().getCount();
@@ -72,7 +72,7 @@ public class HTTPProducer implements IProducer {
 
     protected interface MessageProducer {
         @POST("w/agent/push_events")
-        Call<SendBatchAPIResponse> send(@Body Payload var1);
+        Call<SendBatchAPIResponse> send(@Body RequestPayload var1);
 
         @POST("w/agent/register")
         Call<RegisterAPIResponse> register(@Body UUIDRegister var1);

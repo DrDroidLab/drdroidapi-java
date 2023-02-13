@@ -3,14 +3,14 @@ package io.drdroid.api.models.http.request;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-public class Payload implements java.io.Serializable {
+public class RequestPayload implements java.io.Serializable {
 
     private Data data;
 
-    public Payload() {
+    public RequestPayload() {
     }
 
-    public Payload(Data data) {
+    public RequestPayload(Data data) {
         this.data = data;
     }
 
