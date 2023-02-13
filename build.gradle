@@ -2,9 +2,11 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
-group 'org.drdroid.api'
-version '1.0-SNAPSHOT'
+group = "io.drdroid"
+archivesBaseName = "api-java"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -19,16 +21,79 @@ dependencies {
     // http://square.github.io/tape/
     implementation group: 'com.squareup', name: 'tape', version: '1.2.3'
 
-    // http api call dependency
+    //HTTP api call dependency
     implementation('com.squareup.retrofit:retrofit:2.0.0-beta2')
     implementation('com.squareup.retrofit:converter-jackson:2.0.0-beta2')
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.1'
     testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation group: 'org.awaitility', name: 'awaitility', version: '3.0.0'
 }
 
 
 test {
     useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications{
+
+        mavenJava(MavenPublication){
+
+            groupId = "io.drdroid"
+            artifactId = "api-java"
+            version = "1.0.0"
+
+            from components.java
+
+            pom {
+                name = 'DrDroid Java SDK'
+                description = 'DrDroid Java API to connect with DrDroid Backend.'
+                url = 'https://github.com/orgs/DrDroidLab'
+                inceptionYear = '2023'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'droid-mohit'
+                        name = 'Mohit Goyal'
+                        email = 'mohit.goyale@drdroid.io'
+                    }
+                }
+                scm {
+                    connection='scm:git:git:github.com/DrDroidLab/drdroidapi-java.git'
+                    developerConnection='scm:git:https://github.com/DrDroidLab/drdroidapi-java.git'
+                    url='https://github.com/DrDroidLab/drdroidapi-java'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = project.ossrhUsername
+                password = project.ossrhPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
