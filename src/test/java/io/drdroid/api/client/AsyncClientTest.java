@@ -17,18 +17,16 @@ public class AsyncClientTest {
 
     @Before
     public void setup() {
-
         asyncClient = new AsyncClient(BaseTestDataSupplier.getMockClientConfig());
-
     }
 
     @Test
     public void testEventSend_AddNewEventToBlockingQueue() {
-        Map<String, Object> kvPairs = new HashMap<>();
-        kvPairs.put("test-key-1", "test-value-1");
-        kvPairs.put("test-key-2", 1);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("test-key-1", "test-value-1");
+        payload.put("test-key-2", 1);
 
-        asyncClient.send("test-workflow-name", "test-state", kvPairs);
+        asyncClient.send("test-workflow-name", "test-state", payload);
 
         Assert.assertEquals(1, asyncClient.getNumOfPendingEvents());
     }

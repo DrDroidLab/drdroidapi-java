@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.drdroid.api.IDrDroidAPI;
 import io.drdroid.api.models.ClientConfig;
+import io.drdroid.api.models.Workflow;
 import io.drdroid.api.utils.WorkflowEventDecorator;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
@@ -11,7 +12,6 @@ import io.drdroid.api.producer.IProducer;
 import io.drdroid.api.models.WorkflowEvent;
 import io.drdroid.api.producer.HTTPProducer;
 import io.drdroid.api.utils.DateTimeFormatter;
-import io.drdroid.api.utils.WorkflowEventTransformer;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -69,9 +69,10 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     @Override
-    public void send(String workflowName, String state, Map<String, ?> kvPairs) {
+    public void send(String workflowName, String state, Map<String, Object> payload) {
         String timestamp = DateTimeFormatter.getCurrentFormattedTimeStamp();
-        WorkflowEvent event = WorkflowEventTransformer.transform(workflowName, state, kvPairs, timestamp);
+        Workflow workflow = new Workflow(workflowName);
+        WorkflowEvent event = new WorkflowEvent(workflow, timestamp, state, payload);
         if (this.events.size() > this.eventLimit) {
             this.droppedCount.incrementAndGet();
         } else {
@@ -100,8 +101,6 @@ public class AsyncClient implements IDrDroidAPI {
         return () -> {
             while (true) {
                 try {
-                    //long startTime = System.currentTimeMillis();
-
                     List<WorkflowEvent> eventSet = new ArrayList<>();
                     AsyncClient.this.events.drainTo(eventSet, AsyncClient.this.batchSize);
 
@@ -116,8 +115,6 @@ public class AsyncClient implements IDrDroidAPI {
                         while (true) {
                             if (!var5.hasNext()) {
                                 AsyncClient.this.producer.sendBatch(new Data(workflowEventSet));
-                                //long endTime = System.currentTimeMillis();
-                                //AsyncClient.logger.debug("Total time taken is {}", endTime - startTime);
                                 break;
                             }
 
@@ -128,10 +125,9 @@ public class AsyncClient implements IDrDroidAPI {
                     }
 
                     if (AsyncClient.this.events.size() < AsyncClient.this.eventLimit) {
-                        Thread.sleep((long) AsyncClient.this.maxWaitTimeInMs);
+                        Thread.sleep(AsyncClient.this.maxWaitTimeInMs);
                     }
                 } catch (Exception ignored) {
-                    //AsyncClient.logger.error("MessageConsumer poller exception: " + var9.getMessage(), var9);
                 }
             }
         };

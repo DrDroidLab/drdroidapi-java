@@ -48,11 +48,17 @@ public class DrDroidClientTest {
 
     @Test
     public void testSendAPI_WithMockServer() {
-        Map<String, Object> kvPairs = new HashMap<>();
-        kvPairs.put("test-key-1", "test-value-1");
-        kvPairs.put("test-key-2", 1);
+        Map<String, Object> nestedPayload = new HashMap<>();
+        nestedPayload.put("inner-key-1", false);
+        nestedPayload.put("inner-key-2", 1000);
+        nestedPayload.put("inner-key-3", 3.14);
 
-        drDroidClient.send("test-workflow-name", "test-state", kvPairs);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("test-key-1", "test-value-1");
+        payload.put("test-key-2", 1);
+        payload.put("test-key-3", nestedPayload);
+
+        drDroidClient.send("test-workflow-name", "test-state", payload);
 
         await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() ->
                 drDroidClient.getSentEventCount() == 1);

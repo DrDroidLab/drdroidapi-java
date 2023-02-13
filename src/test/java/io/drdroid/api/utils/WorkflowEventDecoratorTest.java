@@ -1,7 +1,5 @@
 package io.drdroid.api.utils;
 
-import io.drdroid.api.models.KeyValue;
-import io.drdroid.api.models.Value;
 import io.drdroid.api.models.Workflow;
 import io.drdroid.api.models.WorkflowEvent;
 import org.junit.Assert;
@@ -11,9 +9,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowEventDecoratorTest {
@@ -31,39 +28,31 @@ public class WorkflowEventDecoratorTest {
     @Test
     public void testWorkflowDecoratorWithKvPairs() {
 
-        Value testValue = new Value();
-        testValue.setStringValue("test_value");
-        testValue.setValid(true);
-        KeyValue kv = new KeyValue("test_key", testValue);
-        List<KeyValue> kvPairs = new ArrayList<>();
-        kvPairs.add(kv);
+        Map<String, Object> nestedPayload = new HashMap<>();
+        nestedPayload.put("inner-key-1", false);
+        nestedPayload.put("inner-key-2", 1000);
+        nestedPayload.put("inner-key-3", 3.14);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("test-key-1", true);
+        payload.put("test-key-2", nestedPayload);
+
         workflowEvent = new WorkflowEvent(new Workflow("test_workflow"), "yyyy-MM-dd HH:mm:ss",
-                "test_state", kvPairs);
+                "test_state", payload);
 
-        List<KeyValue> expectedKvList = new ArrayList<>();
-        expectedKvList.add(kv);
-
-        Value drdEvIdValue = new Value();
-        drdEvIdValue.setLongValue(1L);
-        drdEvIdValue.setValid(true);
-        expectedKvList.add(new KeyValue("$drd_ev_id", drdEvIdValue));
-
-        Value drdAgentIdValue = new Value();
-        drdAgentIdValue.setStringValue("123456789");
-        drdAgentIdValue.setValid(true);
-        expectedKvList.add(new KeyValue("$drd_agent_id", drdAgentIdValue));
-
-        Value serviceNameValue = new Value();
-        serviceNameValue.setStringValue("test-service-name");
-        serviceNameValue.setValid(true);
-        expectedKvList.add(new KeyValue("service", serviceNameValue));
+        Map<String, Object> expectedPayload = new HashMap<>();
+        expectedPayload.put("test-key-1", true);
+        expectedPayload.put("test-key-2", nestedPayload);
+        expectedPayload.put("$drd_ev_id", 1L);
+        expectedPayload.put("$drd_agent_id", "123456789");
+        expectedPayload.put("service", "test-service-name");
 
         WorkflowEvent expected = new WorkflowEvent(new Workflow("test_workflow"), "yyyy-MM-dd HH:mm:ss",
-                "test_state", expectedKvList);
+                "test_state", expectedPayload);
 
         WorkflowEvent actual = workflowEventDecorator.build(workflowEvent, 1L, "123456789");
 
-        Assert.assertEquals(expected.getKvPairs().size(), actual.getKvPairs().size());
+        Assert.assertEquals(expected.getPayload().size(), actual.getPayload().size());
         Assert.assertEquals(expected.getWorkflow().getName(), actual.getWorkflow().getName());
         Assert.assertEquals(expected.getState(), actual.getState());
         Assert.assertEquals(expected.getTimestamp(), actual.getTimestamp());

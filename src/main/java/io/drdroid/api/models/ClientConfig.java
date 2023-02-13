@@ -7,25 +7,19 @@ public class ClientConfig {
     private static final String sinUrlEnvKey = "DRDROID_HOSTNAME";
     private static final String sinUrlEnvDefaultValue = "";
 
+    private int connectionTimeoutInMs = 1000; //1s
+    private int socketTimeoutInMs = 1000; //1s
+    private int asyncMaxWaitTimeInMs = 10000; //10s
+    private int asyncBatchSize = 10;
+    private int maxQueueSize = 300;
+    private int messagePerSecond = 10;
+
     private String sinkUrl;
     private String serviceName;
-    private String org;
-    private int connectionTimeoutInMs;
-    private int socketTimeoutInMs;
-    private int asyncMaxWaitTimeInMs;
-    private int asyncBatchSize;
-    private int maxQueueSize;
-    private int messagePerSecond;
     private int servicePort;
+    private String org;
 
     public ClientConfig(int servicePort, String serviceName) {
-        //TODO: tune configs
-        this.connectionTimeoutInMs = 1000;
-        this.socketTimeoutInMs = 1000;
-        this.asyncMaxWaitTimeInMs = 1000;
-        this.asyncBatchSize = 20;
-        this.maxQueueSize = 20;
-        this.messagePerSecond = 10;
         this.servicePort = servicePort;
         this.serviceName = serviceName;
         this.sinkUrl = System.getenv(sinUrlEnvKey) != null && !System.getenv(sinUrlEnvKey).isEmpty() ?
@@ -35,13 +29,6 @@ public class ClientConfig {
     }
 
     public ClientConfig(String sinkUrl, int servicePort, String serviceName) {
-        //TODO: tune configs
-        this.connectionTimeoutInMs = 1000;
-        this.socketTimeoutInMs = 1000;
-        this.asyncMaxWaitTimeInMs = 1000;
-        this.asyncBatchSize = 20;
-        this.maxQueueSize = 20;
-        this.messagePerSecond = 10;
         this.sinkUrl = sinkUrl;
         this.servicePort = servicePort;
         this.serviceName = serviceName;
@@ -49,13 +36,6 @@ public class ClientConfig {
     }
 
     public ClientConfig(String org, String sinkUrl, int servicePort, String serviceName) {
-        //TODO: tune configs
-        this.connectionTimeoutInMs = 1000;
-        this.socketTimeoutInMs = 1000;
-        this.asyncMaxWaitTimeInMs = 1000;
-        this.asyncBatchSize = 20;
-        this.maxQueueSize = 20;
-        this.messagePerSecond = 10;
         this.sinkUrl = sinkUrl;
         this.servicePort = servicePort;
         this.serviceName = serviceName;

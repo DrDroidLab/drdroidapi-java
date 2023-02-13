@@ -14,8 +14,8 @@ public class DrDroidClient implements IDrDroidAPI {
     }
 
     @Override
-    public void send(String workflowName, String state, Map<String, ?> kvPairs) {
-        this.client.send(workflowName, state, kvPairs);
+    public void send(String workflowName, String state, Map<String, Object> payload) {
+        this.client.send(workflowName, state, payload);
     }
 
     @Override
