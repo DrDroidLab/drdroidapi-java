@@ -21,7 +21,6 @@ import java.net.InetSocketAddress;
 public class HTTPProducerTest {
 
     private HttpServer httpServer;
-    private IProducer httpProducer;
 
     @Before
     public void setup() throws IOException {
@@ -64,7 +63,7 @@ public class HTTPProducerTest {
         });
         httpServer.start();
 
-        Assert.assertTrue(httpProducer.register(new UUIDRegister()));
+        Assert.assertTrue(HTTPProducer.getHTTPProducer().register(new UUIDRegister()));
     }
 
 }

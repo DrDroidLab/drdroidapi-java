@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
 import io.drdroid.api.models.Workflow;
-import io.drdroid.api.producer.IProducer;
 import io.drdroid.api.utils.WorkflowEventDecorator;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
@@ -42,10 +41,6 @@ public class AsyncClient implements IDrDroidAPI {
         this.createQueuePoller();
     }
 
-    /**
-     * Singleton pattern implementation
-     * @return The singleton instance of the AsyncClient class
-     */
     public static IDrDroidAPI getAsyncClientInstance() {
         synchronized (clientSync) {
             if (null == instance) {

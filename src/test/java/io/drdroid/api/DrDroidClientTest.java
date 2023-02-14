@@ -38,7 +38,7 @@ public class DrDroidClientTest {
         httpServer.start();
 
         ClientConfig.asyncMaxWaitTimeInMs = 1;
-        DrDroidClient.init(EnvVars.org, EnvVars.sinkUrl, EnvVars.service);
+        DrDroidClient.initDrDroidClient(EnvVars.org, EnvVars.sinkUrl, EnvVars.service);
     }
 
     @After

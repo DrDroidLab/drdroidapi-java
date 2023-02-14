@@ -16,11 +16,6 @@ public class DrDroidClient {
         client = AsyncClient.getAsyncClientInstance();
     }
 
-    /**
-     * Singleton pattern implementation
-     *
-     * @return The singleton instance of the DrDroidClient class
-     */
     private static DrDroidClient getDrDroidClient() {
         synchronized (syncObject) {
             if (null == instance) {
@@ -30,22 +25,15 @@ public class DrDroidClient {
         return instance;
     }
 
-    /**
-     * Singleton pattern implementation
-     *
-     * @return The singleton instance of the DrDroidClient class
-     */
-    public static DrDroidClient init(String org, String sinkUrl, String serviceName) {
+    public static void initDrDroidClient(String org, String sinkUrl, String serviceName) {
         synchronized (syncObject) {
             if (null == instance) {
                 Configuration.org = org;
                 Configuration.sinkUrl = sinkUrl;
                 Configuration.serviceName = serviceName;
-
-                instance = new DrDroidClient();
+                instance = getDrDroidClient();
             }
         }
-        return instance;
     }
 
     public static void send(String workflowName, String state, Map<String, Object> payload) {

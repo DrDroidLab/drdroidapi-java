@@ -52,11 +52,6 @@ public class HTTPProducer implements IProducer {
         }
     }
 
-    /**
-     * Singleton pattern implementation
-     *
-     * @return The singleton instance of the HTTPProducer class
-     */
     public static HTTPProducer getHTTPProducer() {
         synchronized (producerSync) {
             if (null == instance || isInitialisedWithError) {
@@ -66,6 +61,7 @@ public class HTTPProducer implements IProducer {
         return instance;
     }
 
+    @Override
     public Integer sendBatch(Data data) {
         if (null == this.producer) {
             return 0;
@@ -80,6 +76,7 @@ public class HTTPProducer implements IProducer {
         return 0;
     }
 
+    @Override
     public boolean register(UUIDRegister register) {
         if (null == instance.producer) {
             return false;
@@ -108,7 +105,6 @@ public class HTTPProducer implements IProducer {
 
         @POST("w/agent/register")
         Call<RegisterAPIResponse> sendBeat(@Body UUIDRegister var1);
-
     }
 
 }
