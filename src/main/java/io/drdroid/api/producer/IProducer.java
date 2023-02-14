@@ -5,7 +5,9 @@ import io.drdroid.api.models.http.request.UUIDRegister;
 
 public interface IProducer {
 
-    Integer sendBatch(Data data);
+    static Integer sendBatch(Data data) {
+        return null;
+    }
 
     boolean register(UUIDRegister register);
 

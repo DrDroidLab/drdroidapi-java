@@ -1,6 +1,5 @@
 package io.drdroid.api.client;
 
-import io.drdroid.api.data.BaseTestDataSupplier;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +12,11 @@ import java.util.Map;
 @RunWith(MockitoJUnitRunner.class)
 public class AsyncClientTest {
 
-    private AsyncClient asyncClient;
+    private IDrDroidAPI asyncClient;
 
     @Before
     public void setup() {
-        asyncClient = new AsyncClient(BaseTestDataSupplier.getMockClientConfig());
+        asyncClient = AsyncClient.getAsyncClientInstance();
     }
 
     @Test

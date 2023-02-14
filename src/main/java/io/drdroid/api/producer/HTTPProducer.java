@@ -2,6 +2,7 @@ package io.drdroid.api.producer;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.RequestPayload;
@@ -20,30 +21,55 @@ import java.util.concurrent.TimeUnit;
 
 public class HTTPProducer implements IProducer {
 
-    private final MessageProducer producer;
+    private static final Object producerSync = new Object();
+    public static boolean isInitialisedWithError;
+    private static HTTPProducer instance = null;
 
-    public HTTPProducer(ClientConfig config) {
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setConnectTimeout(config.getConnectionTimeoutInMs(), TimeUnit.MILLISECONDS);
-        okHttpClient.setReadTimeout(config.getSocketTimeoutInMs(), TimeUnit.MILLISECONDS);
-        okHttpClient.interceptors().add(chain -> {
-            Request request = chain.request().newBuilder()
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("X-REQUEST-ORG", config.getOrg())
+    private MessageProducer producer = null;
+
+    public HTTPProducer() {
+        try {
+            OkHttpClient okHttpClient = new OkHttpClient();
+            okHttpClient.setConnectTimeout(ClientConfig.connectionTimeoutInMs, TimeUnit.MILLISECONDS);
+            okHttpClient.setReadTimeout(ClientConfig.socketTimeoutInMs, TimeUnit.MILLISECONDS);
+            okHttpClient.interceptors().add(chain -> {
+                Request request = chain.request().newBuilder()
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("X-REQUEST-ORG", Configuration.org)
+                        .build();
+                return chain.proceed(request);
+            });
+
+            Retrofit retrofit = (new Retrofit.Builder())
+                    .baseUrl(Configuration.sinkUrl)
+                    .client(okHttpClient)
+                    .addConverterFactory(JacksonConverterFactory.create())
                     .build();
-            return chain.proceed(request);
-        });
 
-        Retrofit retrofit = (new Retrofit.Builder())
-                .baseUrl(config.getSinkUrl())
-                .client(okHttpClient)
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build();
+            producer = retrofit.create(MessageProducer.class);
+        } catch (Exception ignored) {
+            isInitialisedWithError = true;
+        }
+    }
 
-        this.producer = retrofit.create(MessageProducer.class);
+    /**
+     * Singleton pattern implementation
+     *
+     * @return The singleton instance of the HTTPProducer class
+     */
+    public static HTTPProducer getHTTPProducer() {
+        synchronized (producerSync) {
+            if (null == instance || isInitialisedWithError) {
+                instance = new HTTPProducer();
+            }
+        }
+        return instance;
     }
 
     public Integer sendBatch(Data data) {
+        if (null == this.producer) {
+            return 0;
+        }
         Call<SendBatchAPIResponse> call = this.producer.send(new RequestPayload(data));
         try {
             Response<SendBatchAPIResponse> response = call.execute();
@@ -55,14 +81,17 @@ public class HTTPProducer implements IProducer {
     }
 
     public boolean register(UUIDRegister register) {
-        Call<RegisterAPIResponse> call = this.producer.register(register);
+        if (null == instance.producer) {
+            return false;
+        }
+        Call<RegisterAPIResponse> call = instance.producer.register(register);
         try {
             call.execute();
             return true;
         } catch (IOException var4) {
             var4.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     @Override

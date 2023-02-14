@@ -1,6 +1,8 @@
 package io.drdroid.api.producer;
 
 import com.sun.net.httpserver.HttpServer;
+import io.drdroid.api.Configuration;
+import io.drdroid.api.data.EnvVars;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
 import org.junit.After;
@@ -15,13 +17,11 @@ import sun.net.www.protocol.http.HttpURLConnection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import static io.drdroid.api.data.BaseTestDataSupplier.getMockClientConfig;
-
 @RunWith(MockitoJUnitRunner.class)
 public class HTTPProducerTest {
 
     private HttpServer httpServer;
-    private HTTPProducer httpProducer;
+    private IProducer httpProducer;
 
     @Before
     public void setup() throws IOException {
@@ -29,7 +29,9 @@ public class HTTPProducerTest {
 
         httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
 
-        httpProducer = new HTTPProducer(getMockClientConfig());
+        Configuration.org = EnvVars.org;
+        Configuration.sinkUrl = EnvVars.sinkUrl;
+        Configuration.serviceName = EnvVars.service;
     }
 
     @After
@@ -47,7 +49,7 @@ public class HTTPProducerTest {
         });
         httpServer.start();
 
-        int sentCount = httpProducer.sendBatch(new Data());
+        int sentCount = HTTPProducer.getHTTPProducer().sendBatch(new Data());
 
         Assert.assertEquals(1, sentCount);
     }

@@ -1,6 +1,8 @@
 package io.drdroid.api;
 
 import com.sun.net.httpserver.HttpServer;
+import io.drdroid.api.data.EnvVars;
+import io.drdroid.api.models.ClientConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static io.drdroid.api.data.BaseTestDataSupplier.getMockClientConfig;
 import static org.awaitility.Awaitility.await;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,7 +37,8 @@ public class DrDroidClientTest {
         });
         httpServer.start();
 
-        drDroidClient = new DrDroidClient(getMockClientConfig());
+        ClientConfig.asyncMaxWaitTimeInMs = 1;
+        DrDroidClient.init(EnvVars.org, EnvVars.sinkUrl, EnvVars.service);
     }
 
     @After
@@ -56,10 +58,10 @@ public class DrDroidClientTest {
         payload.put("test-key-2", 1);
         payload.put("test-key-3", nestedPayload);
 
-        drDroidClient.send("test-workflow-name", "test-state", payload);
+        DrDroidClient.send("test-workflow-name", "test-state", payload);
 
         await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() ->
-                drDroidClient.getSentEventCount() == 1);
+                DrDroidClient.getSentEventCount() == 1);
     }
 
 
