@@ -35,13 +35,13 @@ public class HTTPProducer implements IProducer {
             okHttpClient.interceptors().add(chain -> {
                 Request request = chain.request().newBuilder()
                         .addHeader("Content-Type", "application/json")
-                        .addHeader("X-REQUEST-ORG", Configuration.org)
+                        .addHeader("X-REQUEST-ORG", Configuration.getOrg())
                         .build();
                 return chain.proceed(request);
             });
 
             Retrofit retrofit = (new Retrofit.Builder())
-                    .baseUrl(Configuration.sinkUrl)
+                    .baseUrl(Configuration.getSinkUrl())
                     .client(okHttpClient)
                     .addConverterFactory(JacksonConverterFactory.create())
                     .build();
@@ -83,8 +83,8 @@ public class HTTPProducer implements IProducer {
         }
         Call<RegisterAPIResponse> call = instance.producer.register(register);
         try {
-            call.execute();
-            return true;
+            Response<RegisterAPIResponse> response = call.execute();
+            return response.body().getSuccess();
         } catch (IOException var4) {
             var4.printStackTrace();
         }

@@ -13,6 +13,12 @@ public class DrDroidClient {
     private final IDrDroidAPI client;
 
     private DrDroidClient() {
+        Configuration.initialise();
+        client = AsyncClient.getAsyncClientInstance();
+    }
+
+    private DrDroidClient(String org, String sinkUrl, String serviceName) {
+        Configuration.initialise(org, sinkUrl, serviceName);
         client = AsyncClient.getAsyncClientInstance();
     }
 
@@ -28,10 +34,7 @@ public class DrDroidClient {
     public static void initDrDroidClient(String org, String sinkUrl, String serviceName) {
         synchronized (syncObject) {
             if (null == instance) {
-                Configuration.org = org;
-                Configuration.sinkUrl = sinkUrl;
-                Configuration.serviceName = serviceName;
-                instance = getDrDroidClient();
+                instance = new DrDroidClient(org, sinkUrl, serviceName);
             }
         }
     }

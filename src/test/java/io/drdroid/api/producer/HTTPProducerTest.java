@@ -1,14 +1,11 @@
 package io.drdroid.api.producer;
 
 import com.sun.net.httpserver.HttpServer;
-import io.drdroid.api.Configuration;
+import io.drdroid.api.DrDroidClient;
 import io.drdroid.api.data.EnvVars;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -26,15 +23,13 @@ public class HTTPProducerTest {
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
 
-        httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
+        httpServer = HttpServer.create(new InetSocketAddress(1080), 0);
 
-        Configuration.org = EnvVars.org;
-        Configuration.sinkUrl = EnvVars.sinkUrl;
-        Configuration.serviceName = EnvVars.service;
+        DrDroidClient.initDrDroidClient(EnvVars.org, EnvVars.sinkUrl, EnvVars.service);
     }
 
     @After
-    public void teardown() {
+    public void destroy() {
         httpServer.stop(0);
     }
 
@@ -47,7 +42,6 @@ public class HTTPProducerTest {
             exchange.close();
         });
         httpServer.start();
-
         int sentCount = HTTPProducer.getHTTPProducer().sendBatch(new Data());
 
         Assert.assertEquals(1, sentCount);

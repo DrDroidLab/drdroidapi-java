@@ -135,7 +135,7 @@ public class AsyncClient implements IDrDroidAPI {
         if (this.registerLock.tryLock()) {
             try {
                 UUIDRegister register = new UUIDRegister();
-                register.setServiceName(Configuration.serviceName);
+                register.setServiceName(Configuration.getServiceName());
                 register.setUuid(uuid);
                 register.setResourceKvs(resourceKvs);
                 register.setIp(InetAddress.getLocalHost().getHostAddress());

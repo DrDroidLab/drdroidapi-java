@@ -8,13 +8,37 @@ public class Configuration {
     private static final String serviceNameEnvKey = "DRDROID_SERVICE_NAME";
     private static final String serviceNameEnvDefaultValue = "";
 
-    public static String org = System.getenv(orgEnvKey) != null && !System.getenv(orgEnvKey).isEmpty() ?
-            System.getenv(orgEnvKey) : orgEnvDefaultValue;
+    private static String org;
+    private static String sinkUrl;
+    private static String serviceName;
 
-    public static String sinkUrl = System.getenv(sinkUrlEnvKey) != null && !System.getenv(sinkUrlEnvKey).isEmpty() ?
-            System.getenv(sinkUrlEnvKey) : sinkUrlEnvDefaultValue;
+    protected static void initialise() {
+        org = System.getenv(orgEnvKey) != null && !System.getenv(orgEnvKey).isEmpty() ?
+                System.getenv(orgEnvKey) : orgEnvDefaultValue;
 
-    public static String serviceName = System.getenv(serviceNameEnvKey) != null && !System.getenv(serviceNameEnvKey).isEmpty() ?
-            System.getenv(serviceNameEnvKey) : serviceNameEnvDefaultValue;
+        sinkUrl = System.getenv(sinkUrlEnvKey) != null && !System.getenv(sinkUrlEnvKey).isEmpty() ?
+                System.getenv(sinkUrlEnvKey) : sinkUrlEnvDefaultValue;
+
+        serviceName = System.getenv(serviceNameEnvKey) != null && !System.getenv(serviceNameEnvKey).isEmpty() ?
+                System.getenv(serviceNameEnvKey) : serviceNameEnvDefaultValue;
+    }
+
+    protected static void initialise(String orgOverride, String sinkUrlOverride, String serviceNameOverride) {
+        org = orgOverride;
+        sinkUrl = sinkUrlOverride;
+        serviceName = serviceNameOverride;
+    }
+
+    public static String getOrg() {
+        return org;
+    }
+
+    public static String getSinkUrl() {
+        return sinkUrl;
+    }
+
+    public static String getServiceName() {
+        return serviceName;
+    }
 
 }

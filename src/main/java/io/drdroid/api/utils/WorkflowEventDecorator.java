@@ -20,7 +20,7 @@ public class WorkflowEventDecorator {
 
         payload.put(drdEvIdKey, eventId);
         payload.put(drdAgentIdKey, agentId);
-        payload.put(serviceNameKey, Configuration.serviceName);
+        payload.put(serviceNameKey, Configuration.getServiceName());
 
         return workflowEvent;
     }
