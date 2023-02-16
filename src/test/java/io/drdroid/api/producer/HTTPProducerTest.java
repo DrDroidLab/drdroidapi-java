@@ -1,12 +1,11 @@
 package io.drdroid.api.producer;
 
 import com.sun.net.httpserver.HttpServer;
+import io.drdroid.api.DrDroidClient;
+import io.drdroid.api.data.EnvVars;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -15,25 +14,22 @@ import sun.net.www.protocol.http.HttpURLConnection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import static io.drdroid.api.data.BaseTestDataSupplier.getMockClientConfig;
-
 @RunWith(MockitoJUnitRunner.class)
 public class HTTPProducerTest {
 
     private HttpServer httpServer;
-    private HTTPProducer httpProducer;
 
     @Before
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
 
-        httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
+        httpServer = HttpServer.create(new InetSocketAddress(1080), 0);
 
-        httpProducer = new HTTPProducer(getMockClientConfig());
+        DrDroidClient.initDrDroidClient(EnvVars.org, EnvVars.sinkUrl, EnvVars.service);
     }
 
     @After
-    public void teardown() {
+    public void destroy() {
         httpServer.stop(0);
     }
 
@@ -46,8 +42,7 @@ public class HTTPProducerTest {
             exchange.close();
         });
         httpServer.start();
-
-        int sentCount = httpProducer.sendBatch(new Data());
+        int sentCount = HTTPProducer.getHTTPProducer().sendBatch(new Data());
 
         Assert.assertEquals(1, sentCount);
     }
@@ -62,7 +57,7 @@ public class HTTPProducerTest {
         });
         httpServer.start();
 
-        Assert.assertTrue(httpProducer.register(new UUIDRegister()));
+        Assert.assertTrue(HTTPProducer.getHTTPProducer().register(new UUIDRegister()));
     }
 
 }

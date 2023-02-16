@@ -2,6 +2,7 @@ package io.drdroid.api.producer;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.RequestPayload;
@@ -20,30 +21,51 @@ import java.util.concurrent.TimeUnit;
 
 public class HTTPProducer implements IProducer {
 
-    private final MessageProducer producer;
+    private static final Object producerSync = new Object();
+    public static boolean isInitialisedWithError;
+    private static HTTPProducer instance = null;
 
-    public HTTPProducer(ClientConfig config) {
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setConnectTimeout(config.getConnectionTimeoutInMs(), TimeUnit.MILLISECONDS);
-        okHttpClient.setReadTimeout(config.getSocketTimeoutInMs(), TimeUnit.MILLISECONDS);
-        okHttpClient.interceptors().add(chain -> {
-            Request request = chain.request().newBuilder()
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("X-REQUEST-ORG", config.getOrg())
+    private MessageProducer producer = null;
+
+    public HTTPProducer() {
+        try {
+            OkHttpClient okHttpClient = new OkHttpClient();
+            okHttpClient.setConnectTimeout(ClientConfig.connectionTimeoutInMs, TimeUnit.MILLISECONDS);
+            okHttpClient.setReadTimeout(ClientConfig.socketTimeoutInMs, TimeUnit.MILLISECONDS);
+            okHttpClient.interceptors().add(chain -> {
+                Request request = chain.request().newBuilder()
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("X-REQUEST-ORG", Configuration.getOrg())
+                        .build();
+                return chain.proceed(request);
+            });
+
+            Retrofit retrofit = (new Retrofit.Builder())
+                    .baseUrl(Configuration.getSinkUrl())
+                    .client(okHttpClient)
+                    .addConverterFactory(JacksonConverterFactory.create())
                     .build();
-            return chain.proceed(request);
-        });
 
-        Retrofit retrofit = (new Retrofit.Builder())
-                .baseUrl(config.getSinkUrl())
-                .client(okHttpClient)
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build();
-
-        this.producer = retrofit.create(MessageProducer.class);
+            producer = retrofit.create(MessageProducer.class);
+        } catch (Exception ignored) {
+            isInitialisedWithError = true;
+        }
     }
 
+    public static HTTPProducer getHTTPProducer() {
+        synchronized (producerSync) {
+            if (null == instance || isInitialisedWithError) {
+                instance = new HTTPProducer();
+            }
+        }
+        return instance;
+    }
+
+    @Override
     public Integer sendBatch(Data data) {
+        if (null == this.producer) {
+            return 0;
+        }
         Call<SendBatchAPIResponse> call = this.producer.send(new RequestPayload(data));
         try {
             Response<SendBatchAPIResponse> response = call.execute();
@@ -54,15 +76,19 @@ public class HTTPProducer implements IProducer {
         return 0;
     }
 
+    @Override
     public boolean register(UUIDRegister register) {
-        Call<RegisterAPIResponse> call = this.producer.register(register);
-        try {
-            call.execute();
-            return true;
-        } catch (IOException var4) {
-            var4.printStackTrace();
+        if (null == instance.producer) {
             return false;
         }
+        Call<RegisterAPIResponse> call = instance.producer.register(register);
+        try {
+            Response<RegisterAPIResponse> response = call.execute();
+            return response.body().getSuccess();
+        } catch (IOException var4) {
+            var4.printStackTrace();
+        }
+        return false;
     }
 
     @Override
@@ -79,7 +105,6 @@ public class HTTPProducer implements IProducer {
 
         @POST("w/agent/register")
         Call<RegisterAPIResponse> sendBeat(@Body UUIDRegister var1);
-
     }
 
 }

@@ -2,13 +2,12 @@ package io.drdroid.api.client;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.drdroid.api.IDrDroidAPI;
+import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
 import io.drdroid.api.models.Workflow;
 import io.drdroid.api.utils.WorkflowEventDecorator;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
-import io.drdroid.api.producer.IProducer;
 import io.drdroid.api.models.WorkflowEvent;
 import io.drdroid.api.producer.HTTPProducer;
 import io.drdroid.api.utils.DateTimeFormatter;
@@ -28,29 +27,27 @@ public class AsyncClient implements IDrDroidAPI {
     private static final int MAX_THREADS = 40;
     private static final int MIN_THREADS = 1;
     private static final UUID uuid = UUID.randomUUID();
-
-    private Boolean registered = false;
-    private final int eventLimit;
-    private final int batchSize;
-    private final int maxWaitTimeInMs;
+    private static final Object clientSync = new Object();
+    private static AsyncClient instance = null;
 
     private final AtomicLong droppedCount = new AtomicLong(0L);
     private final AtomicLong eventId = new AtomicLong(0L);
     private final BlockingQueue<WorkflowEvent> events = new LinkedBlockingQueue<>();
     private final Lock registerLock = new ReentrantLock();
 
-    private final WorkflowEventDecorator workflowEventDecorator;
-    private final IProducer producer;
-    private final ClientConfig clientConfig;
+    private Boolean registered = false;
 
-    public AsyncClient(ClientConfig config) {
-        this.clientConfig = config;
-        this.eventLimit = config.getMaxQueueSize();
-        this.maxWaitTimeInMs = config.getAsyncMaxWaitTimeInMs();
-        this.batchSize = config.getAsyncBatchSize();
-        this.workflowEventDecorator = new WorkflowEventDecorator(config.getServiceName());
-        this.producer = new HTTPProducer(clientConfig);
+    private AsyncClient() {
         this.createQueuePoller();
+    }
+
+    public static IDrDroidAPI getAsyncClientInstance() {
+        synchronized (clientSync) {
+            if (null == instance) {
+                instance = new AsyncClient();
+            }
+        }
+        return instance;
     }
 
     @Override
@@ -73,7 +70,7 @@ public class AsyncClient implements IDrDroidAPI {
         String timestamp = DateTimeFormatter.getCurrentFormattedTimeStamp();
         Workflow workflow = new Workflow(workflowName);
         WorkflowEvent event = new WorkflowEvent(workflow, timestamp, state, payload);
-        if (this.events.size() > this.eventLimit) {
+        if (this.events.size() > ClientConfig.maxQueueSize) {
             this.droppedCount.incrementAndGet();
         } else {
             this.events.add(event);
@@ -81,9 +78,8 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     private void createQueuePoller() {
-        int qps = clientConfig.getMessagePerSecond();
-        float messageSentPerSecondInSingleThread = (float) (1000 * this.batchSize / clientConfig.getSocketTimeoutInMs());
-        int threadsRequied = qps / (int) messageSentPerSecondInSingleThread;
+        float messageSentPerSecondInSingleThread = (float) (1000 * ClientConfig.asyncBatchSize / ClientConfig.socketTimeoutInMs);
+        int threadsRequied = ClientConfig.messagePerSecond / (int) messageSentPerSecondInSingleThread;
         if (threadsRequied > MAX_THREADS) {
             threadsRequied = MAX_THREADS;
         } else if (threadsRequied < MIN_THREADS) {
@@ -102,7 +98,7 @@ public class AsyncClient implements IDrDroidAPI {
             while (true) {
                 try {
                     List<WorkflowEvent> eventSet = new ArrayList<>();
-                    AsyncClient.this.events.drainTo(eventSet, AsyncClient.this.batchSize);
+                    AsyncClient.this.events.drainTo(eventSet, ClientConfig.asyncBatchSize);
 
                     if (!AsyncClient.this.registered) {
                         AsyncClient.this.register();
@@ -114,18 +110,18 @@ public class AsyncClient implements IDrDroidAPI {
 
                         while (true) {
                             if (!var5.hasNext()) {
-                                AsyncClient.this.producer.sendBatch(new Data(workflowEventSet));
+                                HTTPProducer.getHTTPProducer().sendBatch(new Data(workflowEventSet));
                                 break;
                             }
 
                             WorkflowEvent event = var5.next();
                             long eventNum = AsyncClient.this.eventId.incrementAndGet();
-                            workflowEventSet.add(AsyncClient.this.workflowEventDecorator.build(event, eventNum, uuid.toString()));
+                            workflowEventSet.add(WorkflowEventDecorator.build(event, eventNum, uuid.toString()));
                         }
                     }
 
-                    if (AsyncClient.this.events.size() < AsyncClient.this.eventLimit) {
-                        Thread.sleep(AsyncClient.this.maxWaitTimeInMs);
+                    if (AsyncClient.this.events.size() < ClientConfig.maxQueueSize) {
+                        Thread.sleep(ClientConfig.asyncMaxWaitTimeInMs);
                     }
                 } catch (Exception ignored) {
                 }
@@ -136,11 +132,10 @@ public class AsyncClient implements IDrDroidAPI {
     @VisibleForTesting
     protected void register() {
         Map<String, String> resourceKvs = new HashMap<>();
-        resourceKvs.put("Port", String.valueOf(clientConfig.getServicePort()));
         if (this.registerLock.tryLock()) {
             try {
                 UUIDRegister register = new UUIDRegister();
-                register.setServiceName(clientConfig.getServiceName());
+                register.setServiceName(Configuration.getServiceName());
                 register.setUuid(uuid);
                 register.setResourceKvs(resourceKvs);
                 register.setIp(InetAddress.getLocalHost().getHostAddress());
