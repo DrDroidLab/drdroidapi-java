@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import io.drdroid.api.models.value.KeyValue;
 
-import java.util.Map;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,16 +15,16 @@ public class WorkflowEvent implements java.io.Serializable {
     private Workflow workflow;
     private String timestamp;
     private String state;
-    private Map<String, Object> payload;
+    private List<KeyValue> kvs;
 
     public WorkflowEvent() {
     }
 
-    public WorkflowEvent(Workflow workflow, String timestamp, String state, Map<String, Object> payload) {
+    public WorkflowEvent(Workflow workflow, String timestamp, String state, List<KeyValue> kvs) {
         this.workflow = workflow;
         this.timestamp = timestamp;
         this.state = state;
-        this.payload = payload;
+        this.kvs = kvs;
     }
 
     @JsonGetter("workflow")
@@ -56,14 +57,14 @@ public class WorkflowEvent implements java.io.Serializable {
         this.state = state;
     }
 
-    @JsonGetter("payload")
-    public Map<String, Object> getPayload() {
-        return this.payload;
+    @JsonGetter("kvs")
+    public List<KeyValue> getKvs() {
+        return this.kvs;
     }
 
-    @JsonSetter("payload")
-    public void setPayload(Map<String, Object> payload) {
-        this.payload = payload;
+    @JsonSetter("kvs")
+    public void setKvs(List<KeyValue> kvs) {
+        this.kvs = kvs;
     }
 
 }

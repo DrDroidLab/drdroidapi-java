@@ -39,8 +39,8 @@ public class DrDroidClient {
         }
     }
 
-    public static void send(String workflowName, String state, Map<String, Object> payload) {
-        getDrDroidClient().client.send(workflowName, state, payload);
+    public static void send(String workflowName, String state, Map<String, ?> kvs) {
+        getDrDroidClient().client.send(workflowName, state, kvs);
     }
 
     public static long getSentEventCount() {
