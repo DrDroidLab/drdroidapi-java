@@ -19,47 +19,38 @@ public class Value {
     public static Value newStringValue(String value) {
         Value typedValue = new Value();
         typedValue.setStringValue(value);
-        typedValue.setValid(true);
         return typedValue;
     }
 
     public static Value newBooleanValue(Boolean value) {
         Value typedValue = new Value();
         typedValue.setBooleanValue(value);
-        typedValue.setValid(true);
         return typedValue;
     }
 
     public static Value newLongValue(Long value) {
         Value typedValue = new Value();
         typedValue.setLongValue(value);
-        typedValue.setValid(true);
         return typedValue;
     }
 
     public static Value newDoubleValue(Double value) {
         Value typedValue = new Value();
         typedValue.setDoubleValue(value);
-        typedValue.setValid(true);
         return typedValue;
     }
 
     public static Value newArrayValue(List<Value> value) {
         Value typedValue = new Value();
         typedValue.setArrayValue(value);
-        typedValue.setValid(true);
         return typedValue;
     }
 
     public static Value newKvValueList(List<KeyValue> value) {
         Value typedValue = new Value();
         typedValue.setKeyValueList(value);
-        typedValue.setValid(true);
         return typedValue;
     }
-
-    @JsonIgnore
-    boolean valid = false;
 
     public Value() {
     }
@@ -132,14 +123,6 @@ public class Value {
     @JsonSetter("bytes_value")
     public void setByteValue(Byte value) {
         this.byteValue = value;
-    }
-
-    public void setValid(Boolean valid) {
-        this.valid = valid;
-    }
-
-    public Boolean getValid() {
-        return valid;
     }
 
 }

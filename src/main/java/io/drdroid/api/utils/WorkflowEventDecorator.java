@@ -20,20 +20,9 @@ public class WorkflowEventDecorator {
             kvs = new ArrayList<>();
         }
 
-        Value drdEvIdValue = new Value();
-        drdEvIdValue.setLongValue(eventId);
-        drdEvIdValue.setValid(true);
-        kvs.add(new KeyValue(drdEvIdKey, drdEvIdValue));
-
-        Value drdAgentIdValue = new Value();
-        drdAgentIdValue.setStringValue(agentId);
-        drdAgentIdValue.setValid(true);
-        kvs.add(new KeyValue(drdAgentIdKey, drdAgentIdValue));
-
-        Value serviceNameValue = new Value();
-        serviceNameValue.setStringValue(Configuration.getServiceName());
-        serviceNameValue.setValid(true);
-        kvs.add(new KeyValue(serviceNameKey, serviceNameValue));
+        kvs.add(new KeyValue(drdEvIdKey, Value.newLongValue(eventId)));
+        kvs.add(new KeyValue(drdAgentIdKey, Value.newStringValue(agentId)));
+        kvs.add(new KeyValue(serviceNameKey, Value.newStringValue(Configuration.getServiceName())));
 
         return workflowEvent;
     }

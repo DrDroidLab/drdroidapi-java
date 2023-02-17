@@ -7,15 +7,11 @@ import io.drdroid.api.models.value.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class WorkflowEventTransformer {
 
     public static WorkflowEvent transform(String workflowName, String state, Map<String, ?> kvPairs, String timeStamp) {
         List<KeyValue> modelKvPairs = getKvs(kvPairs);
-
-        modelKvPairs = modelKvPairs.stream().filter(kv -> kv.getValue().getValid()).collect(Collectors.toList());
-
         Workflow workflow = new Workflow(workflowName);
         return new WorkflowEvent(workflow, timeStamp, state, modelKvPairs);
     }
