@@ -1,4 +1,4 @@
-package io.drdroid.api.models.value;
+package io.drdroid.api.models.kvs;
 
 import com.fasterxml.jackson.annotation.*;
 

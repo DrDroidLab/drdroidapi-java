@@ -1,4 +1,4 @@
-package io.drdroid.api.models.value;
+package io.drdroid.api.models.kvs;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,22 +9,22 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ArrayValues {
+public class KvValues {
 
-    private List<Value> arrayValues;
+    private List<KeyValue> kvValues;
 
-    public ArrayValues(List<Value> arrayValues) {
-        this.arrayValues = arrayValues;
+    public KvValues(List<KeyValue> kvValues) {
+        this.kvValues = kvValues;
     }
 
     @JsonGetter("values")
-    public List<Value> getArrayValues() {
-        return this.arrayValues;
+    public List<KeyValue> getKvValues() {
+        return this.kvValues;
     }
 
     @JsonSetter("values")
-    public void setArrayValues(List<Value> arrayValues) {
-        this.arrayValues = arrayValues;
+    public void setKvValues(List<KeyValue> kvValues) {
+        this.kvValues = kvValues;
     }
 
 }

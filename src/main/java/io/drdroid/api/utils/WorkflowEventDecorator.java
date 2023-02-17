@@ -1,8 +1,8 @@
 package io.drdroid.api.utils;
 
 import io.drdroid.api.Configuration;
-import io.drdroid.api.models.value.KeyValue;
-import io.drdroid.api.models.value.Value;
+import io.drdroid.api.models.kvs.KeyValue;
+import io.drdroid.api.models.kvs.Value;
 import io.drdroid.api.models.WorkflowEvent;
 
 import java.util.*;
