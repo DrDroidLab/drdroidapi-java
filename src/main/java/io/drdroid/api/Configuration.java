@@ -1,20 +1,20 @@
 package io.drdroid.api;
 
 public class Configuration {
-    private static final String orgEnvKey = "DRDROID_ORG_NAME";
-    private static final String orgEnvDefaultValue = "";
+    private static final String apiTokenEnvKey = "DRDROID_API_TOKEN";
+    private static final String apiTokenEnvDefaultValue = "";
     private static final String sinkUrlEnvKey = "DRDROID_HOSTNAME";
-    private static final String sinkUrlEnvDefaultValue = "";
+    private static final String sinkUrlEnvDefaultValue = "ingestion@drdroid.io";
     private static final String serviceNameEnvKey = "DRDROID_SERVICE_NAME";
     private static final String serviceNameEnvDefaultValue = "";
 
-    private static String org;
+    private static String apiToken;
     private static String sinkUrl;
     private static String serviceName;
 
     protected static void initialise() {
-        org = System.getenv(orgEnvKey) != null && !System.getenv(orgEnvKey).isEmpty() ?
-                System.getenv(orgEnvKey) : orgEnvDefaultValue;
+        apiToken = System.getenv(apiTokenEnvKey) != null && !System.getenv(apiTokenEnvKey).isEmpty() ?
+                System.getenv(apiTokenEnvKey) : apiTokenEnvDefaultValue;
 
         sinkUrl = System.getenv(sinkUrlEnvKey) != null && !System.getenv(sinkUrlEnvKey).isEmpty() ?
                 System.getenv(sinkUrlEnvKey) : sinkUrlEnvDefaultValue;
@@ -23,14 +23,14 @@ public class Configuration {
                 System.getenv(serviceNameEnvKey) : serviceNameEnvDefaultValue;
     }
 
-    protected static void initialise(String orgOverride, String sinkUrlOverride, String serviceNameOverride) {
-        org = orgOverride;
+    protected static void initialise(String apiTokenOverride, String sinkUrlOverride, String serviceNameOverride) {
+        apiToken = apiTokenOverride;
         sinkUrl = sinkUrlOverride;
         serviceName = serviceNameOverride;
     }
 
-    public static String getOrg() {
-        return org;
+    public static String getApiToken() {
+        return apiToken;
     }
 
     public static String getSinkUrl() {

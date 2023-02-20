@@ -25,7 +25,7 @@ public class HTTPProducerTest {
 
         httpServer = HttpServer.create(new InetSocketAddress(1080), 0);
 
-        DrDroidClient.initDrDroidClient(EnvVars.org, EnvVars.sinkUrl, EnvVars.service);
+        DrDroidClient.initDrDroidClient(EnvVars.apiToken, EnvVars.sinkUrl, EnvVars.service);
     }
 
     @After

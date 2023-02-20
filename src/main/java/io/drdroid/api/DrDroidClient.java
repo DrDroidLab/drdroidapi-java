@@ -17,8 +17,8 @@ public class DrDroidClient {
         client = AsyncClient.getAsyncClientInstance();
     }
 
-    private DrDroidClient(String org, String sinkUrl, String serviceName) {
-        Configuration.initialise(org, sinkUrl, serviceName);
+    private DrDroidClient(String apiToken, String sinkUrl, String serviceName) {
+        Configuration.initialise(apiToken, sinkUrl, serviceName);
         client = AsyncClient.getAsyncClientInstance();
     }
 
