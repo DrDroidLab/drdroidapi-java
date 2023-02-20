@@ -4,7 +4,7 @@ public class Configuration {
     private static final String apiTokenEnvKey = "DRDROID_API_TOKEN";
     private static final String apiTokenEnvDefaultValue = "";
     private static final String sinkUrlEnvKey = "DRDROID_HOSTNAME";
-    private static final String sinkUrlEnvDefaultValue = "ingestion@drdroid.io";
+    private static final String sinkUrlEnvDefaultValue = "http://ingestion.drdroid.io";
     private static final String serviceNameEnvKey = "DRDROID_SERVICE_NAME";
     private static final String serviceNameEnvDefaultValue = "";
 
