@@ -113,9 +113,10 @@ public class AsyncClient implements IDrDroidAPI {
                                 break;
                             }
 
-                            WorkflowEvent event = var5.next();
+                            /*WorkflowEvent event = var5.next();
                             long eventNum = AsyncClient.this.eventId.incrementAndGet();
-                            workflowEventSet.add(WorkflowEventDecorator.build(event, eventNum, uuid.toString()));
+                            workflowEventSet.add(WorkflowEventDecorator.build(event, eventNum, uuid.toString()));*/
+                            workflowEventSet.add(var5.next());
                         }
                     }
 
