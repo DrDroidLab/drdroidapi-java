@@ -1,10 +1,10 @@
 package io.drdroid.api;
 
 public class Configuration {
-    private static final String apiTokenEnvKey = "DRDROID_API_TOKEN";
+    private static final String apiTokenEnvKey = "DRDROID_AUTH_TOKEN";
     private static final String apiTokenEnvDefaultValue = "";
     private static final String sinkUrlEnvKey = "DRDROID_HOSTNAME";
-    private static final String sinkUrlEnvDefaultValue = "https://ingestion.drdroid.io";
+    private static final String sinkUrlEnvDefaultValue = "https://ingest.drdroid.io";
     private static final String serviceNameEnvKey = "DRDROID_SERVICE_NAME";
     private static final String serviceNameEnvDefaultValue = "";
 
