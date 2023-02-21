@@ -35,7 +35,7 @@ public class HTTPProducer implements IProducer {
             okHttpClient.interceptors().add(chain -> {
                 Request request = chain.request().newBuilder()
                         .addHeader("Content-Type", "application/json")
-                        .addHeader("X-REQUEST-ORG", Configuration.getOrg())
+                        .addHeader("Authorization", Configuration.getApiToken())
                         .build();
                 return chain.proceed(request);
             });

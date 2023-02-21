@@ -4,13 +4,12 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
-import io.drdroid.api.models.Workflow;
-import io.drdroid.api.utils.WorkflowEventDecorator;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
 import io.drdroid.api.models.WorkflowEvent;
 import io.drdroid.api.producer.HTTPProducer;
 import io.drdroid.api.utils.DateTimeFormatter;
+import io.drdroid.api.utils.WorkflowEventTransformer;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -66,10 +65,9 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     @Override
-    public void send(String workflowName, String state, Map<String, Object> payload) {
+    public void send(String workflowName, String state, Map<String, ?> kvs) {
         String timestamp = DateTimeFormatter.getCurrentFormattedTimeStamp();
-        Workflow workflow = new Workflow(workflowName);
-        WorkflowEvent event = new WorkflowEvent(workflow, timestamp, state, payload);
+        WorkflowEvent event = WorkflowEventTransformer.transform(workflowName, state, kvs, timestamp);
         if (this.events.size() > ClientConfig.maxQueueSize) {
             this.droppedCount.incrementAndGet();
         } else {
@@ -114,9 +112,8 @@ public class AsyncClient implements IDrDroidAPI {
                                 break;
                             }
 
-                            WorkflowEvent event = var5.next();
                             long eventNum = AsyncClient.this.eventId.incrementAndGet();
-                            workflowEventSet.add(WorkflowEventDecorator.build(event, eventNum, uuid.toString()));
+                            workflowEventSet.add(var5.next());
                         }
                     }
 

@@ -17,8 +17,8 @@ public class DrDroidClient {
         client = AsyncClient.getAsyncClientInstance();
     }
 
-    private DrDroidClient(String org, String sinkUrl, String serviceName) {
-        Configuration.initialise(org, sinkUrl, serviceName);
+    private DrDroidClient(String apiToken, String sinkUrl, String serviceName) {
+        Configuration.initialise(apiToken, sinkUrl, serviceName);
         client = AsyncClient.getAsyncClientInstance();
     }
 
@@ -39,8 +39,8 @@ public class DrDroidClient {
         }
     }
 
-    public static void send(String workflowName, String state, Map<String, Object> payload) {
-        getDrDroidClient().client.send(workflowName, state, payload);
+    public static void send(String workflowName, String state, Map<String, ?> kvs) {
+        getDrDroidClient().client.send(workflowName, state, kvs);
     }
 
     public static long getSentEventCount() {
