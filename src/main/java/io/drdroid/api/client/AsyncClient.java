@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
-import io.drdroid.api.utils.WorkflowEventDecorator;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
 import io.drdroid.api.models.WorkflowEvent;
@@ -113,9 +112,7 @@ public class AsyncClient implements IDrDroidAPI {
                                 break;
                             }
 
-                            /*WorkflowEvent event = var5.next();
                             long eventNum = AsyncClient.this.eventId.incrementAndGet();
-                            workflowEventSet.add(WorkflowEventDecorator.build(event, eventNum, uuid.toString()));*/
                             workflowEventSet.add(var5.next());
                         }
                     }
