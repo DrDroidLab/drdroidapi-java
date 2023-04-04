@@ -97,13 +97,13 @@ public class HTTPProducer implements IProducer {
 
 
     protected interface MessageProducer {
-        @POST("w/agent/push_events")
+        @POST("e/ingest/events/v2")
         Call<SendBatchAPIResponse> send(@Body RequestPayload var1);
 
-        @POST("w/agent/register")
+        @POST("e/agent/register")
         Call<RegisterAPIResponse> register(@Body UUIDRegister var1);
 
-        @POST("w/agent/register")
+        @POST("e/agent/register")
         Call<RegisterAPIResponse> sendBeat(@Body UUIDRegister var1);
     }
 

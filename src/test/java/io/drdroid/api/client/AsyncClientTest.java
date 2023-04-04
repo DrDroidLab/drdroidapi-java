@@ -25,7 +25,7 @@ public class AsyncClientTest {
         payload.put("test-key-1", "test-value-1");
         payload.put("test-key-2", 1);
 
-        asyncClient.send("test-workflow-name", "test-state", payload);
+        asyncClient.send("test-event-name", payload, System.currentTimeMillis());
 
         Assert.assertEquals(1, asyncClient.getNumOfPendingEvents());
     }

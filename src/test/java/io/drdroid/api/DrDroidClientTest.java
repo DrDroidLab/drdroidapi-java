@@ -29,7 +29,7 @@ public class DrDroidClientTest {
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
         httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
-        httpServer.createContext("/w/agent/push_events", exchange -> {
+        httpServer.createContext("/e/ingest/events/v2", exchange -> {
             byte[] response = "{\"count\": 1}".getBytes();
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length);
             exchange.getResponseBody().write(response);
@@ -58,7 +58,7 @@ public class DrDroidClientTest {
         payload.put("test-key-2", 1);
         payload.put("test-key-3", nestedPayload);
 
-        DrDroidClient.send("test-workflow-name", "test-state", payload);
+        DrDroidClient.send("test-event-name", payload);
 
         await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() ->
                 DrDroidClient.getSentEventCount() == 1);
