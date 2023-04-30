@@ -10,7 +10,7 @@ Read more [here](https://kenobi.drdroid.io/docs).
 #### Add the following to your build.gradle:
 
 ```agsl
-implementation group: 'io.drdroid', name: 'api-java', version: '1.0.0'
+implementation group: 'io.drdroid', name: 'api-java', version: '2.0.0'
 ```
 
 Build your java project
