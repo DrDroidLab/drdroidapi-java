@@ -6,7 +6,7 @@ apply plugin: 'signing'
 
 group = "io.drdroid"
 archivesBaseName = "api-java"
-version = "1.0.1"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
@@ -42,13 +42,13 @@ java {
 }
 
 publishing {
-    publications{
+    publications {
 
-        mavenJava(MavenPublication){
+        mavenJava(MavenPublication) {
 
             groupId = "io.drdroid"
             artifactId = "api-java"
-            version = "1.0.0"
+            version = "2.0.0"
 
             from components.java
 
@@ -72,9 +72,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection='scm:git:git:github.com/DrDroidLab/drdroidapi-java.git'
-                    developerConnection='scm:git:https://github.com/DrDroidLab/drdroidapi-java.git'
-                    url='https://github.com/DrDroidLab/drdroidapi-java'
+                    connection = 'scm:git:git:github.com/DrDroidLab/drdroidapi-java.git'
+                    developerConnection = 'scm:git:https://github.com/DrDroidLab/drdroidapi-java.git'
+                    url = 'https://github.com/DrDroidLab/drdroidapi-java'
                 }
             }
         }
