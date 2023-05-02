@@ -4,12 +4,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.drdroid.api.Configuration;
 import io.drdroid.api.models.ClientConfig;
+import io.drdroid.api.models.IngestionEvent;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
-import io.drdroid.api.models.WorkflowEvent;
 import io.drdroid.api.producer.HTTPProducer;
-import io.drdroid.api.utils.DateTimeFormatter;
-import io.drdroid.api.utils.WorkflowEventTransformer;
+import io.drdroid.api.utils.IngestionEventTransformer;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -31,7 +30,7 @@ public class AsyncClient implements IDrDroidAPI {
 
     private final AtomicLong droppedCount = new AtomicLong(0L);
     private final AtomicLong eventId = new AtomicLong(0L);
-    private final BlockingQueue<WorkflowEvent> events = new LinkedBlockingQueue<>();
+    private final BlockingQueue<IngestionEvent> events = new LinkedBlockingQueue<>();
     private final Lock registerLock = new ReentrantLock();
 
     private Boolean registered = false;
@@ -65,13 +64,12 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     @Override
-    public void send(String workflowName, String state, Map<String, ?> kvs) {
-        String timestamp = DateTimeFormatter.getCurrentFormattedTimeStamp();
-        WorkflowEvent event = WorkflowEventTransformer.transform(workflowName, state, kvs, timestamp);
+    public void send(String eventName, Map<String, ?> kvs, long timestamp) {
+        IngestionEvent ingestionEvent = IngestionEventTransformer.transform(eventName, kvs, timestamp);
         if (this.events.size() > ClientConfig.maxQueueSize) {
             this.droppedCount.incrementAndGet();
         } else {
-            this.events.add(event);
+            this.events.add(ingestionEvent);
         }
     }
 
@@ -95,7 +93,7 @@ public class AsyncClient implements IDrDroidAPI {
         return () -> {
             while (true) {
                 try {
-                    List<WorkflowEvent> eventSet = new ArrayList<>();
+                    List<IngestionEvent> eventSet = new ArrayList<>();
                     AsyncClient.this.events.drainTo(eventSet, ClientConfig.asyncBatchSize);
 
                     if (!AsyncClient.this.registered) {
@@ -103,17 +101,17 @@ public class AsyncClient implements IDrDroidAPI {
                     }
 
                     if (eventSet.size() > 0) {
-                        List<WorkflowEvent> workflowEventSet = new ArrayList<>(eventSet.size());
-                        Iterator<WorkflowEvent> var5 = eventSet.iterator();
+                        List<IngestionEvent> workflowIngestionEventSet = new ArrayList<>(eventSet.size());
+                        Iterator<IngestionEvent> var5 = eventSet.iterator();
 
                         while (true) {
                             if (!var5.hasNext()) {
-                                HTTPProducer.getHTTPProducer().sendBatch(new Data(workflowEventSet));
+                                HTTPProducer.getHTTPProducer().sendBatch(new Data(workflowIngestionEventSet));
                                 break;
                             }
 
                             long eventNum = AsyncClient.this.eventId.incrementAndGet();
-                            workflowEventSet.add(var5.next());
+                            workflowIngestionEventSet.add(var5.next());
                         }
                     }
 

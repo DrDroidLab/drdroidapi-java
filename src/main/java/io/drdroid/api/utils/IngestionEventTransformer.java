@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class WorkflowEventTransformer {
+public class IngestionEventTransformer {
 
-    public static WorkflowEvent transform(String workflowName, String state, Map<String, ?> kvPairs, String timeStamp) {
+    public static IngestionEvent transform(String eventName, Map<String, ?> kvPairs, long timeStamp) {
         List<KeyValue> modelKvPairs = getKvs(kvPairs);
-        Workflow workflow = new Workflow(workflowName);
-        return new WorkflowEvent(workflow, timeStamp, state, modelKvPairs);
+        return new IngestionEvent(eventName, modelKvPairs, timeStamp);
     }
 
     private static List<KeyValue> getKvs(Map<String, ?> input) {

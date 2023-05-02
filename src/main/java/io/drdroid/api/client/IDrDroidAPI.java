@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface IDrDroidAPI {
 
-    void send(String workflowName, String state, Map<String, ?> kvs);
+    void send(String eventName, Map<String, ?> kvs, long timestamp);
 
     long getSentEventCount();
 

@@ -39,8 +39,13 @@ public class DrDroidClient {
         }
     }
 
-    public static void send(String workflowName, String state, Map<String, ?> kvs) {
-        getDrDroidClient().client.send(workflowName, state, kvs);
+    public static void send(String eventName, Map<String, ?> kvs) {
+        long timestampInMillis = System.currentTimeMillis();
+        getDrDroidClient().client.send(eventName, kvs, timestampInMillis);
+    }
+
+    public static void send(String eventName, Map<String, ?> kvs, long timestamp) {
+        getDrDroidClient().client.send(eventName, kvs, timestamp);
     }
 
     public static long getSentEventCount() {

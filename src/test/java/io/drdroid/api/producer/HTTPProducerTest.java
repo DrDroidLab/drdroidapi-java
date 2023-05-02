@@ -35,7 +35,7 @@ public class HTTPProducerTest {
 
     @Test
     public void testSendBatch() {
-        httpServer.createContext("/w/agent/push_events", exchange -> {
+        httpServer.createContext("/e/ingest/events/v2", exchange -> {
             byte[] response = "{\"count\": 1}".getBytes();
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length);
             exchange.getResponseBody().write(response);
@@ -49,7 +49,7 @@ public class HTTPProducerTest {
 
     @Test
     public void testRegister() {
-        httpServer.createContext("/w/agent/register", exchange -> {
+        httpServer.createContext("/e/agent/register", exchange -> {
             byte[] response = "{\"success\": true}".getBytes();
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length);
             exchange.getResponseBody().write(response);

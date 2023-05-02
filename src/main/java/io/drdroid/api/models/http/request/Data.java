@@ -1,7 +1,7 @@
 package io.drdroid.api.models.http.request;
 
 import com.fasterxml.jackson.annotation.*;
-import io.drdroid.api.models.WorkflowEvent;
+import io.drdroid.api.models.IngestionEvent;
 
 import java.util.List;
 
@@ -9,23 +9,23 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Data implements java.io.Serializable {
 
-    List<WorkflowEvent> events;
+    List<IngestionEvent> ingestionEvents;
 
     public Data() {
     }
 
-    public Data(List<WorkflowEvent> events) {
-        this.events = events;
+    public Data(List<IngestionEvent> ingestionEvents) {
+        this.ingestionEvents = ingestionEvents;
     }
 
     @JsonGetter("events")
-    public List<WorkflowEvent> getEvents() {
-        return events;
+    public List<IngestionEvent> getEvents() {
+        return ingestionEvents;
     }
 
     @JsonSetter("events")
-    public void setEvents(List<WorkflowEvent> events) {
-        this.events = events;
+    public void setEvents(List<IngestionEvent> ingestionEvents) {
+        this.ingestionEvents = ingestionEvents;
     }
 
 }
