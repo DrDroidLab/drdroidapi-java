@@ -21,7 +21,7 @@ You will need to setup local environment variables wherever your application is 
 ingestionEvents. You will get these from Doctor Droid platform, but for demo, setup by running the following:
 
 ```
-export DRDROID_AUTH_TOKEN=<API Auth Token>
+export DRDROID_AUTH_TOKEN=Bearer <API Auth Token>
 export DRDROID_HOSTNAME=https://ingest.drdroid.io
 export DRDROID_SERVICE_NAME=<service name>
 ```
