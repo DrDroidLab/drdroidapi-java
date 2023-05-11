@@ -41,7 +41,7 @@ To initialise DrDroidClient, add the following client config:
 
 ```agsl
 To send ingestionEvent to DrDroid, use the following interface:
-client.send(String workflowName, String state, Map<String, ?> keyValuePairs);
+client.send(String state, Map<String, ?> keyValuePairs);
 ```
 
 #### Run the jar from terminal using the following command
