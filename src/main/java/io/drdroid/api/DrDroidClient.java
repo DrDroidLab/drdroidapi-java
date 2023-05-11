@@ -31,10 +31,10 @@ public class DrDroidClient {
         return instance;
     }
 
-    public static void initDrDroidClient(String org, String sinkUrl, String serviceName) {
+    public static void initDrDroidClient(String apiToken, String sinkUrl, String serviceName) {
         synchronized (syncObject) {
             if (null == instance) {
-                instance = new DrDroidClient(org, sinkUrl, serviceName);
+                instance = new DrDroidClient(apiToken, sinkUrl, serviceName);
             }
         }
     }

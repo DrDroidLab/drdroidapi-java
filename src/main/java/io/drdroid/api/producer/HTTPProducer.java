@@ -29,13 +29,19 @@ public class HTTPProducer implements IProducer {
 
     public HTTPProducer() {
         try {
+            final String apiToken;
+            if (!Configuration.getApiToken().startsWith("Bearer")) {
+                apiToken = "Bearer " + Configuration.getApiToken();
+            } else {
+                apiToken = Configuration.getApiToken();
+            }
             OkHttpClient okHttpClient = new OkHttpClient();
             okHttpClient.setConnectTimeout(ClientConfig.connectionTimeoutInMs, TimeUnit.MILLISECONDS);
             okHttpClient.setReadTimeout(ClientConfig.socketTimeoutInMs, TimeUnit.MILLISECONDS);
             okHttpClient.interceptors().add(chain -> {
                 Request request = chain.request().newBuilder()
                         .addHeader("Content-Type", "application/json")
-                        .addHeader("Authorization", Configuration.getApiToken())
+                        .addHeader("Authorization", apiToken)
                         .build();
                 return chain.proceed(request);
             });
