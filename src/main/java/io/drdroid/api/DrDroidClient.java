@@ -13,12 +13,12 @@ public class DrDroidClient {
     private final IDrDroidAPI client;
 
     private DrDroidClient() {
-        Configuration.initialise();
+        ClientRegistry.register();
         client = AsyncClient.getAsyncClientInstance();
     }
 
     private DrDroidClient(String apiToken, String sinkUrl, String serviceName) {
-        Configuration.initialise(apiToken, sinkUrl, serviceName);
+        ClientRegistry.register(apiToken, sinkUrl, serviceName);
         client = AsyncClient.getAsyncClientInstance();
     }
 

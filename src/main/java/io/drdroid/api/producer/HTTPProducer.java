@@ -2,8 +2,8 @@ package io.drdroid.api.producer;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import io.drdroid.api.Configuration;
-import io.drdroid.api.models.ClientConfig;
+import io.drdroid.api.ClientRegistry;
+import io.drdroid.api.ClientConfiguration;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.RequestPayload;
 import io.drdroid.api.models.http.request.UUIDRegister;
@@ -30,14 +30,14 @@ public class HTTPProducer implements IProducer {
     public HTTPProducer() {
         try {
             final String apiToken;
-            if (!Configuration.getApiToken().startsWith("Bearer")) {
-                apiToken = "Bearer " + Configuration.getApiToken();
+            if (!ClientRegistry.getApiToken().startsWith("Bearer")) {
+                apiToken = "Bearer " + ClientRegistry.getApiToken();
             } else {
-                apiToken = Configuration.getApiToken();
+                apiToken = ClientRegistry.getApiToken();
             }
             OkHttpClient okHttpClient = new OkHttpClient();
-            okHttpClient.setConnectTimeout(ClientConfig.connectionTimeoutInMs, TimeUnit.MILLISECONDS);
-            okHttpClient.setReadTimeout(ClientConfig.socketTimeoutInMs, TimeUnit.MILLISECONDS);
+            okHttpClient.setConnectTimeout(ClientConfiguration.getConnectionTimeoutInMs(), TimeUnit.MILLISECONDS);
+            okHttpClient.setReadTimeout(ClientConfiguration.getSocketTimeoutInMs(), TimeUnit.MILLISECONDS);
             okHttpClient.interceptors().add(chain -> {
                 Request request = chain.request().newBuilder()
                         .addHeader("Content-Type", "application/json")
@@ -47,7 +47,7 @@ public class HTTPProducer implements IProducer {
             });
 
             Retrofit retrofit = (new Retrofit.Builder())
-                    .baseUrl(Configuration.getSinkUrl())
+                    .baseUrl(ClientRegistry.getSinkUrl())
                     .client(okHttpClient)
                     .addConverterFactory(JacksonConverterFactory.create())
                     .build();

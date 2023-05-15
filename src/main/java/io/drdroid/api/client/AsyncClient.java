@@ -2,8 +2,8 @@ package io.drdroid.api.client;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.drdroid.api.Configuration;
-import io.drdroid.api.models.ClientConfig;
+import io.drdroid.api.ClientRegistry;
+import io.drdroid.api.ClientConfiguration;
 import io.drdroid.api.models.IngestionEvent;
 import io.drdroid.api.models.http.request.Data;
 import io.drdroid.api.models.http.request.UUIDRegister;
@@ -66,7 +66,7 @@ public class AsyncClient implements IDrDroidAPI {
     @Override
     public void send(String eventName, Map<String, ?> kvs, long timestamp) {
         IngestionEvent ingestionEvent = IngestionEventTransformer.transform(eventName, kvs, timestamp);
-        if (this.events.size() > ClientConfig.maxQueueSize) {
+        if (this.events.size() > ClientConfiguration.getMaxQueueSize()) {
             this.droppedCount.incrementAndGet();
         } else {
             this.events.add(ingestionEvent);
@@ -74,8 +74,8 @@ public class AsyncClient implements IDrDroidAPI {
     }
 
     private void createQueuePoller() {
-        float messageSentPerSecondInSingleThread = (float) (1000 * ClientConfig.asyncBatchSize / ClientConfig.socketTimeoutInMs);
-        int threadsRequied = ClientConfig.messagePerSecond / (int) messageSentPerSecondInSingleThread;
+        float messageSentPerSecondInSingleThread = (float) (1000 * ClientConfiguration.getAsyncBatchSize() / ClientConfiguration.getSocketTimeoutInMs());
+        int threadsRequied = ClientConfiguration.getMessagePerSecond() / (int) messageSentPerSecondInSingleThread;
         if (threadsRequied > MAX_THREADS) {
             threadsRequied = MAX_THREADS;
         } else if (threadsRequied < MIN_THREADS) {
@@ -94,7 +94,7 @@ public class AsyncClient implements IDrDroidAPI {
             while (true) {
                 try {
                     List<IngestionEvent> eventSet = new ArrayList<>();
-                    AsyncClient.this.events.drainTo(eventSet, ClientConfig.asyncBatchSize);
+                    AsyncClient.this.events.drainTo(eventSet, ClientConfiguration.getAsyncBatchSize());
 
                     if (!AsyncClient.this.registered) {
                         AsyncClient.this.register();
@@ -115,8 +115,8 @@ public class AsyncClient implements IDrDroidAPI {
                         }
                     }
 
-                    if (AsyncClient.this.events.size() < ClientConfig.maxQueueSize) {
-                        Thread.sleep(ClientConfig.asyncMaxWaitTimeInMs);
+                    if (AsyncClient.this.events.size() < ClientConfiguration.getMaxQueueSize()) {
+                        Thread.sleep(ClientConfiguration.getAsyncMaxWaitTimeInMs());
                     }
                 } catch (Exception ignored) {
                 }
@@ -130,7 +130,7 @@ public class AsyncClient implements IDrDroidAPI {
         if (this.registerLock.tryLock()) {
             try {
                 UUIDRegister register = new UUIDRegister();
-                register.setServiceName(Configuration.getServiceName());
+                register.setServiceName(ClientRegistry.getServiceName());
                 register.setUuid(uuid);
                 register.setResourceKvs(resourceKvs);
                 register.setIp(InetAddress.getLocalHost().getHostAddress());
