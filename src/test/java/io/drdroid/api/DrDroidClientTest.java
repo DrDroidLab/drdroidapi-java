@@ -1,49 +1,53 @@
 package io.drdroid.api;
 
-import com.sun.net.httpserver.HttpServer;
 import io.drdroid.api.data.EnvVars;
-import io.drdroid.api.models.ClientConfig;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.net.www.protocol.http.HttpURLConnection;
+import org.mockserver.integration.ClientAndServer;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
+import static org.mockserver.integration.ClientAndServer.startClientAndServer;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DrDroidClientTest {
 
-    private HttpServer httpServer;
-    private DrDroidClient drDroidClient;
+    private ClientAndServer mockServer;
 
     @Before
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
-        httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
-        httpServer.createContext("/e/ingest/events/v2", exchange -> {
-            byte[] response = "{\"count\": 1}".getBytes();
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length);
-            exchange.getResponseBody().write(response);
-            exchange.close();
-        });
-        httpServer.start();
+        mockServer = startClientAndServer(1080);
 
-        ClientConfig.asyncMaxWaitTimeInMs = 1;
+        mockServer.when(request()
+                        .withMethod("POST")
+                        .withPath("/e/ingest/events/v2")
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("{\"count\": 1}")
+                );
+
+        ClientConfiguration.drDroidAsyncMaxWaitTimeInMs = 1;
         DrDroidClient.initDrDroidClient(EnvVars.apiToken, EnvVars.sinkUrl, EnvVars.service);
     }
 
     @After
     public void teardown() {
-        httpServer.stop(0);
+        mockServer.stop();
     }
 
     @Test
@@ -63,6 +67,5 @@ public class DrDroidClientTest {
         await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() ->
                 DrDroidClient.getSentEventCount() == 1);
     }
-
 
 }

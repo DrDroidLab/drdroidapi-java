@@ -1,6 +1,6 @@
 package io.drdroid.api.utils;
 
-import io.drdroid.api.Configuration;
+import io.drdroid.api.ClientRegistry;
 import io.drdroid.api.models.kvs.KeyValue;
 import io.drdroid.api.models.kvs.Value;
 import io.drdroid.api.models.IngestionEvent;
@@ -22,7 +22,7 @@ public class IngestionEventDecorator {
 
         kvs.add(new KeyValue(drdEvIdKey, Value.newLongValue(eventId)));
         kvs.add(new KeyValue(drdAgentIdKey, Value.newStringValue(agentId)));
-        kvs.add(new KeyValue(serviceNameKey, Value.newStringValue(Configuration.getServiceName())));
+        kvs.add(new KeyValue(serviceNameKey, Value.newStringValue(ClientRegistry.getServiceName())));
 
         return ingestionEvent;
     }

@@ -1,6 +1,6 @@
 package io.drdroid.api;
 
-public class Configuration {
+public class ClientRegistry {
     private static final String apiTokenEnvKey = "DRDROID_AUTH_TOKEN";
     private static final String apiTokenEnvDefaultValue = "";
     private static final String sinkUrlEnvKey = "DRDROID_HOSTNAME";
@@ -12,7 +12,7 @@ public class Configuration {
     private static String sinkUrl;
     private static String serviceName;
 
-    protected static void initialise() {
+    protected static void register() {
         apiToken = System.getenv(apiTokenEnvKey) != null && !System.getenv(apiTokenEnvKey).isEmpty() ?
                 System.getenv(apiTokenEnvKey) : apiTokenEnvDefaultValue;
 
@@ -21,12 +21,15 @@ public class Configuration {
 
         serviceName = System.getenv(serviceNameEnvKey) != null && !System.getenv(serviceNameEnvKey).isEmpty() ?
                 System.getenv(serviceNameEnvKey) : serviceNameEnvDefaultValue;
+
+        ClientConfiguration.initialise();
     }
 
-    protected static void initialise(String apiTokenOverride, String sinkUrlOverride, String serviceNameOverride) {
+    protected static void register(String apiTokenOverride, String sinkUrlOverride, String serviceNameOverride) {
         apiToken = apiTokenOverride;
         sinkUrl = sinkUrlOverride;
         serviceName = serviceNameOverride;
+        ClientConfiguration.initialise();
     }
 
     public static String getApiToken() {
