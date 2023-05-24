@@ -37,7 +37,7 @@ DrDroidClient.initDrDroidClient(<api_token>, <sinK_url>, <service_name>)
 - service_name <String>
 ```
 
-Additionally, you can control the behavior of DrDroid Client by configuring following variables either directly in the code or through ENV variables. 
+Additionally, you can configure the DrDroid Client directly in the code or through ENV variables. 
 
 ```agsl
 ClientConfiguration.drDroidConnectionTimeoutInMs (int, default: 1000) - Http call connect timeout between client and collector
