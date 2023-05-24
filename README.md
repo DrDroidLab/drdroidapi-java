@@ -1,6 +1,6 @@
 # Doctor Droid - Java SDK for custom ingestionEvents
 
-This is a library that will allow developers to Ingest custom stateful to Doctor Droid Platform.
+This is a library that will allow developers to send custom events to Doctor Droid Platform.
 Read more [here](https://kenobi.drdroid.io/docs).
 
 ## Install the SDK
